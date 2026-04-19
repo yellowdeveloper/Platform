@@ -1,0 +1,21 @@
+﻿<Window x:Class="Platform.Windows.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Platform"
+        xmlns:custom_controls="clr-namespace:Platform.CustomControls"
+        xmlns:view_models="clr-namespace:Platform.ViewModel"
+        mc:Ignorable="d"
+        Title="Service Navigator" Height="720" Width="1280"
+        WindowStyle="None" ResizeMode="CanMinimize"
+        Background="Transparent" AllowsTransparency="True">
+    
+    <Border Name="main_navigator" BorderThickness="1" BorderBrush="LightGray" Margin="0" CornerRadius="10">
+        <DockPanel>
+            <custom_controls:Header DockPanel.Dock="Top" PreviewMouseDown="HeaderView_PreviewMouseDown"/>
+            <custom_controls:NavigationPanel DockPanel.Dock="Left"/>
+            <custom_controls:MainPanel DockPanel.Dock="Bottom"/>
+        </DockPanel>
+    </Border>
+</Window>

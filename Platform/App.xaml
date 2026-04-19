@@ -1,0 +1,69 @@
+﻿<Application x:Class="Platform.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:Platform"
+             xmlns:util="clr-namespace:Platform.Utils"
+             StartupUri="Windows/MainWindow.xaml">
+    <Application.Resources>
+        <!-- Static Image Resources -->
+        <BitmapImage x:Key="FYDLogoSource" UriSource="pack://application:,,,/Resources/fyd_logo_trans.png"/>
+        <!-- Static Image Resources End -->
+        
+        <!-- Static Font Resources -->
+        <!-- Static Font Resources End -->
+
+        <!-- Static Style Resources -->
+        <!-- DefaultButton Style -->
+        <Style x:Key="DefaultButton" TargetType="ButtonBase">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="util:RoundButton">
+                        <Grid>
+                            <Border x:Name="base"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="{TemplateBinding CornerRadius}"/>
+                            
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            
+                            <Border x:Name="overlay"
+                                    Background="SlateGray"
+                                    Opacity="0"
+                                    CornerRadius="{TemplateBinding CornerRadius}"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="overlay" Property="Opacity" Value="0.2"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="overlay" Property="Opacity" Value="0.35"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        
+        <!-- Component Border Style -->
+        <Style x:Key="ComponentBorder" TargetType="Border">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="SlateGray"/>
+                    <Setter Property="Opacity" Value="0.2"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        
+        <!-- Drop Effect Style -->
+        <Style x:Key="DropEffectStyle">
+            
+        </Style>
+        <!-- Static Style Resources End -->
+
+    </Application.Resources>
+</Application>

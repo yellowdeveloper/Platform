@@ -1,0 +1,14 @@
+<UserControl x:Class="AnemiaPrediction.PluginUI"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="670" d:DesignWidth="1260">
+    <Border Background="#ffbcbc" CornerRadius="10,10,10,10" Opacity="1">
+        <Grid AllowDrop="True" Margin="10">
+            <TextBlock Text="Hello From AnemiaPrediction" VerticalAlignment="Center" HorizontalAlignment="Center"
+                       TextAlignment="Center" FontSize="40" Foreground="#000000"/>
+        </Grid>
+    </Border>
+</UserControl>
