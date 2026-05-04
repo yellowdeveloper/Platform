@@ -21,7 +21,8 @@ namespace Platform.Services
                 PortName = serialConfig.comPort,
                 BaudRate = serialConfig.baudRate,
                 Parity = (Parity)serialConfig.parity,
-                DataBits = serialConfig.dataBits
+                DataBits = serialConfig.dataBits,
+                DtrEnable = serialConfig.dtrEnable
             };
         }
 

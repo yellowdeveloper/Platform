@@ -13,5 +13,6 @@ namespace Platform.Model
         public int dataBits { get; set; }
         public int parity { get; set; }
         public int stopBits { get; set; }
+        public bool dtrEnable { get; set; }
     };
 }

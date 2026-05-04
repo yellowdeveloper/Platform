@@ -1,5 +1,11 @@
-﻿using System;
+﻿using Platform.Model;
+using Platform.Services;
+using Platform.ViewModel;
+using PluginBase;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,6 +29,16 @@ namespace Platform.CustomControls
         public MainPanel()
         {
             InitializeComponent();
+        }
+
+        private void DoDrop(object sender, DragEventArgs e)
+        {
+            if (DataContext is MainViewModel vm)
+            {
+                var dragged = e.Data.GetData("ComponentFormat") as PluginComponent;
+
+                vm.PluginDropped(dragged);
+            }
         }
     }
 }

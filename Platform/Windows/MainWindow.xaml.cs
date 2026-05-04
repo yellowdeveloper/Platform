@@ -25,6 +25,8 @@ namespace Platform.Windows
         {
             InitializeComponent();
 
+            DebugLogger.LoggerInit(3);
+
             var mainViewModel = new MainViewModel();
 
             this.DataContext = mainViewModel;

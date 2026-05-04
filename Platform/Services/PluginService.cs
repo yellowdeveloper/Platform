@@ -56,5 +56,14 @@ namespace Platform.Services
 
             return DLLLoader.CreateCommand<IPlugin>(pluginPath);
         }
+
+        public string GetPluginNameFromIndex(int index)
+        {
+            string pluginName = configModel.pluginPaths[index];
+            // 전체 경로에서 확장자 .dll 및 경로 Plugins\ 를 합하여 총 12 제거
+            pluginName = pluginName.Substring(8, pluginName.Length - 12);
+
+            return pluginName;
+        }
     }
 }

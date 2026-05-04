@@ -4,6 +4,7 @@ using Platform.Utils;
 using PluginBase;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -21,6 +22,8 @@ namespace Platform.ViewModel
 
         public object _pluginUI;
         public ISerial _pluginSerial;
+        private int lastPluginIndex;
+        public ObservableCollection<PluginComponent> plugins { get; } = new ObservableCollection<PluginComponent>();
 
         private readonly DispatcherTimer _dateTimer = new DispatcherTimer();
 
@@ -29,6 +32,8 @@ namespace Platform.ViewModel
 
         private string _displayTime;
         private int _pluginNum;
+
+        ICommand CreateNewComponentCommand;
 
         public object pluginUI
         {
@@ -68,12 +73,23 @@ namespace Platform.ViewModel
             _dateTimer.Tick += new EventHandler(_dateTimer_Tick);
             _dateTimer.Start();
 
-            pluginService.setPluginNum(pluginService.loadPluginPathsAndReturnCount()); 
-            pluginNum = pluginService.getPluginNum();
-            
-            if (pluginNum)
-            {
+            InitializeComponent();
+        }
 
+        private void InitializeComponent()
+        {
+            pluginService.setPluginNum(pluginService.loadPluginPathsAndReturnCount());
+            pluginNum = pluginService.getPluginNum();
+            DebugLogger.Log(3, $"[DEBUG] number of plugins : {pluginNum}");
+
+            if (pluginNum > 0)
+            {
+                for (int pluginIndex = 0; pluginIndex < pluginNum; pluginIndex++)
+                {
+                    string pluginName = pluginService.GetPluginNameFromIndex(pluginIndex);
+                    CreateNewComponent(pluginIndex, pluginName);
+                    DebugLogger.Log(3, $"[DEBUG] Plugin [No.{pluginIndex} - {pluginName}]");
+                }
             }
         }
 
@@ -81,6 +97,33 @@ namespace Platform.ViewModel
         {
             pluginService.setPluginNum(pluginNum += 1);
             pluginService.getPluginNum();
+        }
+
+        public void CreateNewComponent(int _pluginIndex, string _pluginName = "New")
+        {
+            plugins.Add(new PluginComponent
+            {
+                pluginName = _pluginName,
+                pluginIndex = _pluginIndex
+            });
+        }
+
+        public void PluginDropped(PluginComponent _plugin)
+        {
+            try
+            {
+                IPlugin nowPlugin;
+                IUI nowUI;
+                nowPlugin = pluginService.loadPlugin(_plugin.pluginIndex);
+                nowUI = nowPlugin.GetUIPlugins();
+                pluginUI = nowUI.GetPluginUI();
+                DebugLogger.Log(3, $"[DEBUG] Plugin [ID.{_plugin.pluginIndex} - {_plugin.pluginName}] Loadded Succesfully!");
+            }
+            catch (Exception ex)
+            {
+                DebugLogger.Log(1, $"[ERROR] Error Occurred while loading plugins !!"
+                    + $"Exception Message\n::{ex}\n");
+            }
         }
 
         private void _dateTimer_Tick(object sender, EventArgs e)

@@ -16,6 +16,7 @@ namespace Platform.ViewModel
         private readonly ConfigService configService;
 
         private List<SerialConfig> serialConfigs = new List<SerialConfig>();
+        private List<string> FTDIDevices = new List<string>();
 
         public SerialConfig serialConfig
         {
@@ -38,11 +39,27 @@ namespace Platform.ViewModel
             configService.getAvailablePorts();
 
             int size = configService.getSerialConfigSize();
-            Debug.WriteLine($"\n Num of ports :: {size}\n");
+            DebugLogger.Log(3, $"[DEBUG] Num of ports :: {size}");
             for (int i = 0; i < size; i++)
             {
                 serialConfigs.Add(configService.getSerialConfigFromIndex(i));
-                Debug.WriteLine($"{i}th serial :: {serialConfigs[i].comPort}");
+                DebugLogger.Log(3, $"[DEBUG] {i}th serial :: {serialConfigs[i].comPort}");
+            }
+        }
+
+        void FTDIInit()
+        {
+            // Clear serial config list
+            serialConfigs.Clear();
+
+            configService.getAvailablePorts();
+
+            int size = configService.getSerialConfigSize();
+            DebugLogger.Log(3, $"[DEBUG] Num of ports :: {size}");
+            for (int i = 0; i < size; i++)
+            {
+                serialConfigs.Add(configService.getSerialConfigFromIndex(i));
+                DebugLogger.Log(3, $"[DEBUG] {i}th serial :: {serialConfigs[i].comPort}");
             }
         }
     }

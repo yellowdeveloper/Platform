@@ -31,59 +31,150 @@
                     Width="{Binding RelativeSource={RelativeSource Self}, Path=ActualHeight}"/>
             </Grid>
         </Border>
-
+        
+        <!-- Serial Settings Start From Here (Border) -->
         <Border DockPanel.Dock="Bottom" Background="White" BorderBrush="LightGray"
                 BorderThickness="1,0,1,1" CornerRadius="0,0,10,10">
-            <UniformGrid Rows="9" Columns="2" Margin="20,0,20,10">
-                <TextBlock Text="Connection Info" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="20,0,0,0"/>
-                <TextBlock Text=""/>
-                <TextBlock Text="· SPI" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="20,0,0,0"/>
-                <TextBlock Text=""/>
-                <TextBlock Text="NO.1" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="27,0,0,0"/>
-                <Grid>
+            <!-- This Grid Separates SPI Part & Serial Part -->
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="2*"/>
+                    <RowDefinition Height="7*"/>
+                </Grid.RowDefinitions>
+                <!-- This Grid Separates Buttons and main Setting (SPI)-->
+                <Grid Grid.Row="1">
                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="20"/>
                         <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="30"/>
+                        <ColumnDefinition Width="20"/>
                     </Grid.ColumnDefinitions>
-                    <Border BorderBrush="LightGray" BorderThickness="1" Margin="0,5,10,5" CornerRadius="2.5">
-                        <TextBlock Text="FH232H" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                    </Border>
-                    <TextBlock Grid.Column="1" Text="●" VerticalAlignment="Center" HorizontalAlignment="Left"
-                               Foreground="Red"/>
-                    <TextBlock Grid.Column="1" Text="○" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                    
+                    <!-- Buttons -->
+                    <util:RoundButton Grid.Column="0" Style="{StaticResource DefaultButton}"
+                                      Content="◀" Foreground="SlateGray"
+                                      BorderBrush="LightGray" BorderThickness="0,0,0,0"/>
+                    <util:RoundButton Grid.Column="2" Style="{StaticResource DefaultButton}"
+                                      Content="▶" Foreground="SlateGray"
+                                      BorderBrush="LightGray" BorderThickness="0,0,0,0"/>
+                    
+                    <!-- Main Settings (SPI) -->
+                    <Grid Grid.Column="1" Margin="0,0,0,10">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="1.37*"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.8*"/>
+                            <ColumnDefinition Width="4*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="· SPI" Margin="10,0,0,0" FontSize="15" FontWeight="Bold"
+                                   VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                        <util:RoundButton Grid.Row="0" Grid.Column="1" Content="Connect"
+                                          Margin="10,2.5,0,0" FontSize="10" FontWeight="Normal"
+                                          VerticalAlignment="Center" HorizontalAlignment="Left"
+                                          CornerRadius="5" Style="{StaticResource DefaultButton}"
+                                          BorderBrush="Black" BorderThickness="1"/>
+                        
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="NO.1" Margin="20,0,0,0" FontSize="12" FontWeight="Normal"
+                                   VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                        <Border Grid.Row="1" Grid.Column="1" BorderBrush="LightGray"
+                                BorderThickness="1" Margin="0,5,20,5" CornerRadius="2.5">
+                            <TextBlock Text="FT232H" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </Border>
+                        <TextBlock Grid.Row="1" Grid.Column="2" Text="●"
+                                   VerticalAlignment="Center" HorizontalAlignment="Left" Foreground="Red"/>
+                    </Grid>
                 </Grid>
-                <TextBlock Text="· UART" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="20,0,0,0"/>
-                <TextBlock Text=""/>
-                <TextBlock Text="NO.1" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="27,0,0,0"/>
-                <Grid>
+                <!-- This Grid Separates Buttons and main Setting (UART)-->
+                <Grid Grid.Row="2">
                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="20"/>
                         <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="30"/>
+                        <ColumnDefinition Width="20"/>
                     </Grid.ColumnDefinitions>
-                    <Border BorderBrush="LightGray" BorderThickness="1" Margin="0,5,10,5" CornerRadius="2.5">
-                        <TextBlock Text="{Binding serialConfig.comPort}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                    </Border>
-                    <TextBlock Grid.Column="1" Text="●" VerticalAlignment="Center" HorizontalAlignment="Left"
-                               Foreground="Red"/>
-                    <TextBlock Grid.Column="1" Text="○" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                    
+                    <!-- Buttons -->
+                    <util:RoundButton Grid.Column="0" Style="{StaticResource DefaultButton}"
+                                      Content="◀" Foreground="SlateGray" Margin="0,0,0,0"
+                                      BorderBrush="LightGray" BorderThickness="0,0,0,0"/>
+                    <util:RoundButton Grid.Column="2" Style="{StaticResource DefaultButton}"
+                                      Content="▶" Foreground="SlateGray" Margin="0,0,0,0"
+                                      BorderBrush="LightGray" BorderThickness="0,0,0,0"/>
+
+                    <!-- Main Settings (UART) -->
+                    <Grid Grid.Column="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.8*"/>
+                            <ColumnDefinition Width="4*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="· UART" Margin="10,0,0,0" FontSize="15"
+                                   FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                        <util:RoundButton Grid.Row="0" Grid.Column="1" Content="Connect"
+                                          Margin="10,2.5,0,0" FontSize="10" FontWeight="Normal"
+                                          VerticalAlignment="Center" HorizontalAlignment="Left"
+                                          CornerRadius="5" Style="{StaticResource DefaultButton}"
+                                          BorderBrush="Black" BorderThickness="1"/>
+                        
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="NO.1" Margin="20,0,0,0" FontSize="12"
+                                   FontWeight="Normal" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                        <Border Grid.Row="1" Grid.Column="0" BorderBrush="DimGray"
+                                BorderThickness="0,1,0,0" Margin="55,19,0,0"/>
+                        <Border Grid.Row="1" Grid.Column="1" BorderBrush="LightGray"
+                                BorderThickness="1" Margin="0,5,20,5" CornerRadius="2.5">
+                            <TextBlock Text="{Binding serialConfig.comPort}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </Border>
+                        <TextBlock Grid.Row="1" Grid.Column="2" Text="●"
+                                   VerticalAlignment="Center" HorizontalAlignment="Left" Foreground="Red"/>
+
+                        <Border Grid.Row="2" Grid.Column="0" Margin="35,0,0,0"
+                                BorderBrush="DimGray" BorderThickness="1,0,0,0"/>
+                        <Border Grid.Row="2" Grid.Column="1" BorderBrush="LightGray"
+                                BorderThickness="1" Margin="0,5,20,5" CornerRadius="2.5">
+                            <TextBlock Text="{Binding serialConfig.baudRate}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </Border>
+
+                        <Border Grid.Row="3" Grid.Column="0" Margin="35,0,0,0"
+                                BorderBrush="DimGray" BorderThickness="1,0,0,0"/>
+                        <Border Grid.Row="3" Grid.Column="1" BorderBrush="LightGray" 
+                                BorderThickness="1" Margin="0,5,20,5" CornerRadius="2.5">
+                            <TextBlock Text="{Binding serialConfig.dataBits}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </Border>
+
+                        <Border Grid.Row="4" Grid.Column="0" Margin="35,0,0,0"
+                                BorderBrush="DimGray" BorderThickness="1,0,0,0"/>
+                        <Border Grid.Row="4" Grid.Column="1" BorderBrush="LightGray" 
+                                BorderThickness="1" Margin="0,5,20,5" CornerRadius="2.5">
+                            <TextBlock Text="{Binding serialConfig.parity}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </Border>
+
+                        <Border Grid.Row="5" Grid.Column="0" Margin="35,0,0,0"
+                                BorderBrush="DimGray" BorderThickness="1,0,0,0"/>
+                        <Border Grid.Row="5" Grid.Column="1" BorderBrush="LightGray" 
+                                BorderThickness="1" Margin="0,5,20,5" CornerRadius="2.5">
+                            <TextBlock Text="{Binding serialConfig.stopBits}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </Border>
+
+                        <Border Grid.Row="6" Grid.Column="0" Margin="35,0,0,18"
+                                BorderBrush="DimGray" BorderThickness="1,0,0,1"/>
+                        <Border Grid.Row="6" Grid.Column="1" BorderBrush="LightGray" 
+                                BorderThickness="1" Margin="0,5,20,5" CornerRadius="2.5">
+                            <TextBlock Text="{Binding serialConfig.dtrEnable}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </Border>
+                    </Grid>
                 </Grid>
-                <TextBlock Text="BaudRate" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="20,0,0,0"/>
-                <Border BorderBrush="LightGray" BorderThickness="1" Margin="0,5,20,5" CornerRadius="2.5">
-                    <TextBlock Text="{Binding serialConfig.baudRate}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                </Border>
-                <TextBlock Text="Databits" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="20,0,0,0"/>
-                <Border BorderBrush="LightGray" BorderThickness="1" Margin="0,5,20,5" CornerRadius="2.5">
-                    <TextBlock Text="{Binding serialConfig.dataBits}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                </Border>
-                <TextBlock Text="Parity Bits" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="20,0,0,0"/>
-                <Border BorderBrush="LightGray" BorderThickness="1" Margin="0,5,20,5" CornerRadius="2.5">
-                    <TextBlock Text="{Binding serialConfig.parity}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                </Border>
-                <TextBlock Text="Stop Bits" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="20,0,0,0"/>
-                <Border BorderBrush="LightGray" BorderThickness="1" Margin="0,5,20,5" CornerRadius="2.5">
-                    <TextBlock Text="{Binding serialConfig.stopBits}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                </Border>
-            </UniformGrid>
+            </Grid>
         </Border>
     </DockPanel>
 </Window>

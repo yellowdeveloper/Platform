@@ -1,4 +1,5 @@
 ﻿using Platform.Model;
+using Platform.Utils;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -29,7 +30,7 @@ namespace Platform.Services
         }
 
         public void InitConfig() {
-            Debug.WriteLine("\n* Initializing Config... *\n");
+            DebugLogger.Log(3, "[DEBUG] Initializing Config...");
 
             // Create Plugin Directory to Load Model resources
             if (!Directory.Exists(configModel.pluginPath)) Directory.CreateDirectory(configModel.pluginPath);
@@ -37,11 +38,14 @@ namespace Platform.Services
         }
 
         public void LoadConfig() {
+            DebugLogger.Log(3, "[DEBUG] Loading Config file ... ");
+
             string path = configModel.configPath;
             string configFilePath = Path.Combine(path, "config.ini");
 
             if (!File.Exists(configFilePath))
             {
+                DebugLogger.Log(2, "[WARN] Config.ini doesn't exist, Creating ... ");
                 SaveConfig();
                 return;
             }
@@ -51,7 +55,11 @@ namespace Platform.Services
         public void SaveConfig() {
             string path = configModel.configPath;
 
-            if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+            if (!Directory.Exists(path))
+            {
+                DebugLogger.Log(2, "[WARN] Config Directory doesn't exist, Creating ...");
+                Directory.CreateDirectory(path);
+            }
             string configFilePath = Path.Combine(path, "config.ini");
 
             MapConfigToIniFile("Components", configFilePath);
@@ -84,7 +92,8 @@ namespace Platform.Services
                         baudRate = 115200,
                         dataBits = 8,
                         parity = 0,
-                        stopBits = 0
+                        stopBits = 0,
+                        dtrEnable = false
                     });
             }
         }
@@ -120,9 +129,14 @@ namespace Platform.Services
                         convertedVal = Convert.ChangeType(value, property.PropertyType);
 
                     property.SetValue(configModel, convertedVal);
+                    
                 }
-                catch { /* Default Setting */ }
+                catch
+                {
+                    DebugLogger.Log(2, $"[WARN] Error while loading {property.Name} property. Load Default setting");
+                }
             }
+            DebugLogger.Log(3, "[DEBUG] Config Successfully Loaded !!");
         }
 
         [DllImport("Kernel32")]
