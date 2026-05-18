@@ -1,66 +1,168 @@
 ﻿using OpenCvSharp;
 using Platform.Model;
 using Platform.Services;
+using Platform.Utils;
+using PluginBase.CommonUtils;
 using System;
 using System.Collections.Generic;
-using Platform.Utils;
+using System.Device.Spi;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace Platform.ViewModel
 {
     internal class SetupViewModel :Notifier
     {
-        private readonly ConfigService configService;
+        private readonly CommunicationFacade communicationFacade;
+        private readonly SerialService serialService;
+        private readonly SPIService spiService;
 
         private List<SerialConfig> serialConfigs = new List<SerialConfig>();
+        private Dictionary<int, string> spiDevices;
         private List<string> FTDIDevices = new List<string>();
+
+        private int _serialIndex = 0;
+        private int _spiIndex = 0;
+        // true = Connected, false = Disconnected
+        private bool _serialStat;
+        private bool _spiStat;
+
+        public ICommand SerialConnectionButtonCommand { get; }
+        private ICommand SPIConnectCommand { get; }
+
+        public bool serialStat
+        {
+            get => _serialStat;
+            set
+            {
+                _serialStat = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool spiStat
+        {
+            get => _spiStat;
+            set
+            {
+                _spiStat = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public int serialIndex
+        {
+            get => _serialIndex;
+            set
+            {
+                _serialIndex = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public int spiIndex
+        {
+            get => _spiIndex;
+            set
+            {
+                _spiIndex = value;
+                OnPropertyChanged();
+            }
+        }
 
         public SerialConfig serialConfig
         {
-            get { return serialConfigs[0]; }
-            set { serialConfigs[0] = value; OnPropertyChanged(); }
+            get { return serialConfigs[serialIndex]; }
+            set { serialConfigs[serialIndex] = value; OnPropertyChanged(); }
         }
-        public SetupViewModel(ConfigService _configService)
+        public string spiDevice
         {
-            configService = _configService;
-            SerialConfigInit();
+            get { return spiDevices[spiIndex]; }
+            set { spiDevices[spiIndex] = value; OnPropertyChanged(); }
+        }
+
+        public SetupViewModel(CommunicationFacade _communicationFacade, SerialService _serialService, SPIService _spiService)
+        {
+            communicationFacade = _communicationFacade;
+            serialService = _serialService;
+            spiService = _spiService;
+
+            Init();
+
+            SerialConnectionButtonCommand = new RelayCommand(param => {
+                
+                if (!serialStat)
+                    serialStat = serialService.Connect(serialIndex, serialConfigs[serialIndex]);
+                else
+                {
+                    serialService.Disconnect(serialIndex);
+                    serialStat = false;
+                }
+            });
         }
 
         // Get Available Serial Ports and Set to List
         // Called when SetupWindow Pop-Up
-        void SerialConfigInit()
+        public void Init()
         {
             // Clear serial config list
             serialConfigs.Clear();
+            serialConfigs = communicationFacade.InitializeSerialSettings();
 
-            configService.getAvailablePorts();
+            // Clear spi device index list
+            spiDevices = communicationFacade.InitializeSPIDevices();
 
-            int size = configService.getSerialConfigSize();
+            // Codes For Debug :: You can comment out 3 lines after this comment
+            int size = serialConfigs.Count();
             DebugLogger.Log(3, $"[DEBUG] Num of ports :: {size}");
-            for (int i = 0; i < size; i++)
-            {
-                serialConfigs.Add(configService.getSerialConfigFromIndex(i));
-                DebugLogger.Log(3, $"[DEBUG] {i}th serial :: {serialConfigs[i].comPort}");
-            }
+            for (int i = 0; i < size; i++) DebugLogger.Log(3, $"[DEBUG] {i}th serial :: {serialConfigs[i].comPort}");
         }
 
-        void FTDIInit()
+        public void IncreaseSerialIndex()
         {
-            // Clear serial config list
-            serialConfigs.Clear();
+            if (serialIndex < serialConfigs.Count - 1) ++serialIndex;
+            else serialIndex = 0;
 
-            configService.getAvailablePorts();
+            serialStat = serialService.isSerialDeviceExists(serialIndex);
 
-            int size = configService.getSerialConfigSize();
-            DebugLogger.Log(3, $"[DEBUG] Num of ports :: {size}");
-            for (int i = 0; i < size; i++)
-            {
-                serialConfigs.Add(configService.getSerialConfigFromIndex(i));
-                DebugLogger.Log(3, $"[DEBUG] {i}th serial :: {serialConfigs[i].comPort}");
-            }
+            OnPropertyChanged(nameof(serialConfig));
+            DebugLogger.Log(3, $"[DEBUG] Now Pointing Serial {serialConfigs[serialIndex].comPort}, {serialIndex}");
+        }
+
+        public void DecreaseSerialIndex()
+        {
+            if (serialIndex > 0) serialIndex--;
+            else serialIndex = serialConfigs.Count - 1;
+
+            serialStat = serialService.isSerialDeviceExists(serialIndex);
+
+            OnPropertyChanged(nameof(serialConfig));
+            DebugLogger.Log(3, $"[DEBUG] Now Pointing Serial {serialConfigs[serialIndex].comPort}, {serialIndex}");
+        }
+
+        public void IncreaseSPIIndex()
+        {
+            if (spiIndex < spiDevices.Count - 1) ++spiIndex;
+            else spiIndex = 0;
+
+            spiStat = spiService.isSPIDeviceExists(spiIndex);
+
+            OnPropertyChanged(nameof(spiDevice));
+            DebugLogger.Log(3, $"[DEBUG] Now Pointing SPI Device {spiIndex}");
+        }
+
+        public void DecreaseSPIIndex()
+        {
+            if (spiIndex > 0) spiIndex--;
+            else spiIndex = spiDevices.Count - 1;
+
+            spiStat = spiService.isSPIDeviceExists(spiIndex);
+
+            OnPropertyChanged(nameof(spiDevice));
+            DebugLogger.Log(3, $"[DEBUG] Now Pointing SPI Device {spiIndex}");
         }
     }
 }

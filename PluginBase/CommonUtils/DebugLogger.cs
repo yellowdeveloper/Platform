@@ -5,16 +5,16 @@ using System.Runtime.InteropServices;
 using System.Security.Permissions;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Interop;
 
-namespace Platform.Utils
+namespace PluginBase.CommonUtils
 {
     public static class DebugLogger
     {
         /// <summary>
-        /// LEVEL 0 : 에러만 출력
-        /// LEVEL 1 : 경고 출력
-        /// LEVEL 2 : 확인용 로그까지 모두 출력
+        /// LEVEL 0 : 출력 X, 콘솔창 띄우지 X
+        /// LEVEL 1 : 에러만 출력
+        /// LEVEL 2 : 경고 출력
+        /// LEVEL 3 : 확인용 로그까지 모두 출력
         /// </summary>
         private static int _debugLV;
         public static void LoggerInit(int level)

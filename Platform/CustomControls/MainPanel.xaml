@@ -7,12 +7,12 @@
              mc:Ignorable="d" 
              d:DesignHeight="690" d:DesignWidth="1280">
     <Border Background="#FFF2F3F4" CornerRadius="0,0,10,0" Opacity="1">
-        <Grid AllowDrop="True" Margin="10" Drop="DoDrop">
+        <Grid AllowDrop="True" Drop="DoDrop">
             <TextBlock Text="+" VerticalAlignment="Center" HorizontalAlignment="Center"
                        TextAlignment="Center" FontSize="40" Foreground="#FFCCCCCC"/>
             <Rectangle Stroke="#FFDADADA" StrokeThickness="2" StrokeDashArray="8 4"
-                       Fill="Transparent"/>
-            <ContentControl Content="{Binding pluginUI}" Margin="10"/>
+                       Fill="Transparent" Margin="10"/>
+            <ContentControl Content="{Binding pluginUI}" Margin="5"/>
         </Grid>
         
     </Border>

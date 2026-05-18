@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:Platform"
              xmlns:model="clr-namespace:Platform.Model"
+             xmlns:commonUtil="clr-namespace:PluginBase.CommonUtils;assembly=PluginBase"
              xmlns:util="clr-namespace:Platform.Utils"
              StartupUri="Windows/MainWindow.xaml">
     <Application.Resources>
@@ -11,6 +12,7 @@
         <!-- Static Image Resources End -->
         
         <!-- Static Font Resources -->
+        
         <!-- Static Font Resources End -->
 
         <!-- Static Style Resources -->
@@ -20,7 +22,7 @@
             <Setter Property="BorderBrush" Value="Transparent"/>
             <Setter Property="Template">
                 <Setter.Value>
-                    <ControlTemplate TargetType="util:RoundButton">
+                    <ControlTemplate TargetType="commonUtil:RoundButton">
                         <Grid>
                             <Border x:Name="base"
                                     Background="{TemplateBinding Background}"
@@ -64,7 +66,7 @@
         <DataTemplate x:Key="ComponentTemplate">
             <Grid Height="30" Margin="0, 5, 0, 5" Cursor="Hand"
                   util:DragAction.EnableDrag="True">
-                
+
                 <TextBlock Text="{Binding pluginName, StringFormat='ㅇ {0}'}"
                            VerticalAlignment="Center"
                            Margin="10, 5, 0, 5"/>
@@ -76,6 +78,34 @@
         <!-- Drop Effect Style -->
         <Style x:Key="DropEffectStyle">
             
+        </Style>
+        
+        <!-- Connection State Indication Circle -->
+        <Style x:Key="ConnectionStateIndication" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="Red"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding serialStat}" Value="true">
+                    <Setter Property="Foreground" Value="#FF00FF00"/>
+                </DataTrigger>
+
+                <DataTrigger Binding="{Binding serialStat}" Value="false">
+                    <Setter Property="Foreground" Value="Red"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Connect / Disconnect Button -->
+        <Style x:Key="ConnectionButtonTextBlock" TargetType="TextBlock">
+            <Setter Property="Text" Value="Connect"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding serialStat}" Value="true">
+                    <Setter Property="Text" Value="Disconnect"/>
+                </DataTrigger>
+
+                <DataTrigger Binding="{Binding serialStat}" Value="false">
+                    <Setter Property="Text" Value="Connect"/>
+                </DataTrigger>
+            </Style.Triggers>
         </Style>
         <!-- Static Style Resources End -->
 

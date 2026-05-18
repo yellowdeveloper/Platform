@@ -59,6 +59,8 @@ namespace Platform.CustomControls
             {
                 if (parentWindow?.DataContext is ViewModel.MainViewModel vm)
                 {
+                    vm.setupViewModel.Init();
+
                     SetupWindow setupWindow = new SetupWindow();
                     setupWindow.DataContext = vm.setupViewModel;
                     setupWindow.Owner = Application.Current.MainWindow;

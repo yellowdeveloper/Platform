@@ -1,9 +1,9 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 
-namespace Platform.Utils
+namespace PluginBase.CommonUtils
 {
-    class RoundButton : Button
+    public class RoundButton : Button
     {
         public static readonly DependencyProperty CornerRadiusProperty = DependencyProperty.Register(nameof(CornerRadius), typeof(CornerRadius), typeof(RoundButton));
         public CornerRadius CornerRadius {

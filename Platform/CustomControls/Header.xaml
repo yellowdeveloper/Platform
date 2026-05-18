@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:Platform.CustomControls"
              xmlns:util="clr-namespace:Platform.Utils"
+             xmlns:commonUtil="clr-namespace:PluginBase.CommonUtils;assembly=PluginBase"
              mc:Ignorable="d" 
              d:DesignHeight="30" d:DesignWidth="1280"
              Height="30">
@@ -44,19 +45,19 @@
                         <ColumnDefinition Width="30"/>
                     </Grid.ColumnDefinitions>
                     <Label Grid.Column="0" Margin="5,0,0,0">Layout</Label>
-                    <util:RoundButton Grid.Column="1" Margin="5,5,5,5" CornerRadius="2.5"
+                    <commonUtil:RoundButton Grid.Column="1" Margin="5,5,5,5" CornerRadius="2.5"
                             Background="#FFECECEC"  BorderBrush="LightGray" BorderThickness="1"
                             Style="{StaticResource DefaultButton}"/>
 
-                    <util:RoundButton Grid.Column="2" Margin="5,5,5,5" CornerRadius="2.5"
+                    <commonUtil:RoundButton Grid.Column="2" Margin="5,5,5,5" CornerRadius="2.5"
                             BorderBrush="LightGray" Background="#FFECECEC" BorderThickness="1"
                             Style="{StaticResource DefaultButton}">
                         <Path Stroke="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Button}}"
                               StrokeThickness="1"
                               Data="M 0,0 L 0,20"/>
-                    </util:RoundButton>
+                    </commonUtil:RoundButton>
 
-                    <util:RoundButton Grid.Column="3" Margin="5,5,5,5"
+                    <commonUtil:RoundButton Grid.Column="3" Margin="5,5,5,5"
                             BorderBrush="Transparent" Background="Transparent" Foreground="#FFB9B9B9"
                             Content="..." CornerRadius="2.5"
                             Style="{StaticResource DefaultButton}"/>
@@ -69,7 +70,7 @@
                         </Grid.ColumnDefinitions>
                         <TextBlock Grid.Column="0" Text="{Binding displayTime}" VerticalAlignment="Center" HorizontalAlignment="Center"
                                    Foreground="#FF969696"/>
-                        <util:RoundButton Grid.Column="1" Content="⚙️" VerticalAlignment="Center" HorizontalAlignment="Center"
+                        <commonUtil:RoundButton Grid.Column="1" Content="⚙️" VerticalAlignment="Center" HorizontalAlignment="Center"
                                 Foreground="#FF969696" Style="{StaticResource DefaultButton}"
                                 Click="SetupButton_Click" CornerRadius="2.5"
                                 Width="{Binding RelativeSource={RelativeSource Self}, Path=ActualHeight}"/>
@@ -83,15 +84,15 @@
                             <ColumnDefinition Width="30"/>
                             <ColumnDefinition Width="30"/>
                         </Grid.ColumnDefinitions>
-                        <util:RoundButton Grid.Column="1" Content="?" VerticalAlignment="Center" HorizontalAlignment="Center"
+                        <commonUtil:RoundButton Grid.Column="1" Content="?" VerticalAlignment="Center" HorizontalAlignment="Center"
                                 Foreground="Gray" FontWeight="Bold" Style="{StaticResource DefaultButton}"
                                 CornerRadius="2.5"
                                 Width="{Binding RelativeSource={RelativeSource Self}, Path=ActualHeight}"/>
-                        <util:RoundButton Grid.Column="2" Content="—" VerticalAlignment="Center" HorizontalAlignment="Center"
+                        <commonUtil:RoundButton Grid.Column="2" Content="—" VerticalAlignment="Center" HorizontalAlignment="Center"
                                 Foreground="Gray" FontWeight="Bold" Style="{StaticResource DefaultButton}"
                                 Click="MinimizeButton_Click" CornerRadius="2.5"
                                 Width="{Binding RelativeSource={RelativeSource Self}, Path=ActualHeight}"/>
-                        <util:RoundButton Grid.Column="3" Content="X" VerticalAlignment="Center" HorizontalAlignment="Center"
+                        <commonUtil:RoundButton Grid.Column="3" Content="X" VerticalAlignment="Center" HorizontalAlignment="Center"
                                 Foreground="#FFC74040" FontWeight="Bold" Style="{StaticResource DefaultButton}"
                                 Click="CloseButton_Click" CornerRadius="2.5"
                                 Width="{Binding RelativeSource={RelativeSource Self}, Path=ActualHeight}"/>

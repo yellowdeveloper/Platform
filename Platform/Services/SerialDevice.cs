@@ -5,17 +5,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PluginBase;
+using Platform.Utils;
+using PluginBase.CommonUtils;
 
 namespace Platform.Services
 {
-    internal class SerialDevice
+    internal class SerialDevice : ISerialDevice
     {
-        public int id { get; set; }
-        public SerialPort sp { get; set; }
+        private SerialPort sp { get; set; }
 
-        public SerialDevice(int _id, SerialConfig serialConfig)
+        private ISerial serialHandler;
+
+        public SerialDevice(SerialConfig serialConfig)
         {
-            id = _id;
             sp = new SerialPort
             {
                 PortName = serialConfig.comPort,
@@ -26,17 +29,24 @@ namespace Platform.Services
             };
         }
 
-        public void Connect()
-        {
+        public bool Connect()
+        {       
             try
             {
-                // TODO :: Align EventHandler
-
                 sp.Open();
+                DebugLogger.Log(3, $"[DEBUG] Port {sp.PortName} Opend.");
+                return true;
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                DebugLogger.Log(2, $"[WARN] The port {sp.PortName} is already in use.");
+                return false;
             }
             catch (Exception ex)
             {
-                // TODO :: REVEAL ERROR While Opening Serial Port
+                DebugLogger.Log(1, $"[ERROR] Error While Opening Port {sp.PortName}"
+                    + $"Exception Message\n::{ex}\n");
+                return false;
             }
         }
 
@@ -46,16 +56,57 @@ namespace Platform.Services
             {
                 try
                 {
-                    // TODO :: Free EventHandler
-
-                    System.Threading.Thread.Sleep(20);
+                    Thread.Sleep(20);
 
                     sp.Close();
                 }
                 catch (Exception ex)
                 {
-                    // TODO :: REVEAL ERROR While Closing Serial Port
+                    DebugLogger.Log(1, $"[ERROR] Error While Closing Port {sp.PortName}"
+                        + $"Exception Message\n::{ex}\n");
                 }
+            }
+        }
+
+        public void SetDeviceHandler(ISerial _serialHandler)
+        {
+            DebugLogger.Log(3, "[DEBUG] Device Handler successfully attatched!!");
+            serialHandler = _serialHandler;
+        }
+        public void AttachSerialEventHandler()
+        {
+            sp.DataReceived += OnSerialReceived;
+        }
+        public void DetachSerialEventHandler()
+        {
+            sp.DataReceived -= OnSerialReceived;
+        }
+
+        private void OnSerialReceived(object sender, SerialDataReceivedEventArgs e)
+        {
+            if (!sp.IsOpen)
+            {
+                DebugLogger.Log(1, $"[ERROR] Port is not opened, cannot receive data from {sp.PortName}");
+                return;
+            }
+
+            try
+            {
+                int bytesToRead = sp.BytesToRead;
+                byte[] buffer = new byte[bytesToRead];
+                int actuallyRead = sp.Read(buffer, 0, bytesToRead);
+
+                if (actuallyRead > 0)
+                {
+                    serialHandler?.StackReceivedBuffer(buffer, actuallyRead);
+                    serialHandler?.FindValidData();
+                    serialHandler?.ParseReceivedData();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                DebugLogger.Log(1, $"[ERROR] Error Occurred while receiving bytes from serial. {ex}");
             }
         }
     }

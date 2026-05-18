@@ -36,5 +36,36 @@ namespace Platform.Windows
                 DragMove();
             }
         }
+
+        private void SerialArrowRight_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.DataContext is SetupViewModel svm) {
+                svm.IncreaseSerialIndex();
+            }
+        }
+
+        private void SerialArrowLeft_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.DataContext is SetupViewModel svm)
+            {
+                svm.DecreaseSerialIndex();
+            }
+        }
+
+        private void SPIArrowRight_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.DataContext is SetupViewModel svm)
+            {
+                svm.IncreaseSPIIndex();
+            }
+        }
+
+        private void SPIArrowLeft_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.DataContext is SetupViewModel svm)
+            {
+                svm.DecreaseSPIIndex();
+            }
+        }
     }
 }

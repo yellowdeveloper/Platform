@@ -1,5 +1,6 @@
 ﻿using Platform.Model;
 using Platform.Utils;
+using PluginBase.CommonUtils;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -65,37 +66,9 @@ namespace Platform.Services
             MapConfigToIniFile("Components", configFilePath);
         }
 
-        public int getSerialConfigSize()
+        public void SetSerialConfig(List<SerialConfig> configs)
         {
-            return configModel.serialConfigs.Count;
-        }
-
-        public SerialConfig getSerialConfigFromIndex(int idx)
-        {
-            if((configModel.serialConfigs.Count - 1) < idx)
-            {
-                // TODO REVEAL IDX ERROR
-            }
-            return configModel.serialConfigs[idx];
-        }
-
-        public void getAvailablePorts()
-        {
-            string[] port = System.IO.Ports.SerialPort.GetPortNames();
-
-            foreach (string portName in port)
-            {
-                configModel.serialConfigs.Add(
-                    new SerialConfig
-                    {
-                        comPort = portName,
-                        baudRate = 115200,
-                        dataBits = 8,
-                        parity = 0,
-                        stopBits = 0,
-                        dtrEnable = false
-                    });
-            }
+            configModel.serialConfigs = configs;
         }
 
         private void MapConfigToIniFile(string section, string path) {

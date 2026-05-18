@@ -1,5 +1,6 @@
 ﻿using FTD2XX_NET;
 using Platform.Model;
+using PluginBase.CommonUtils;
 using System;
 using System.Collections.Generic;
 using System.IO.Ports;
@@ -11,24 +12,25 @@ namespace Platform.Services
 {
     internal class FTDIDevice
     {
-        public string id { get; set; }
+        public int id { get; }
         public FTDI ftdi { get; set; }
 
-        public FTDIDevice(string _id)
+        private int targetIndex;
+
+        public FTDIDevice(int _id)
         {
             id = _id;
             ftdi = new FTDI(); ;
         }
-        public int Connect()
-        {
-            if (ftdi.IsOpen) return 1;
 
+        public uint searchDevice()
+        {
             uint devCount = 0;
             ftdi.GetNumberOfDevices(ref devCount);
 
             if (devCount == 0)
             {
-                // TODO :: ERROR REVEAL NO DEVICES FOUND
+                DebugLogger.Log(2, $"[WARN] Device doesn't exists.");
                 return 0;
             }
 
@@ -36,31 +38,37 @@ namespace Platform.Services
             FTDI.FT_DEVICE_INFO_NODE[] deviceList = new FTDI.FT_DEVICE_INFO_NODE[devCount];
             ftdi.GetDeviceList(deviceList);
 
-            int targetIndex = -1;
+            int _targetIndex = -1;
 
             // Find FT232H or RS232-HS
-            for (int i = 0; i < devCount; i++)
+            for (int i = id; i < devCount; i++)
             {
-                // TODO :: LOG -> Device list
+                DebugLogger.Log(3, $"[DEBUG] Device [{i}]: {deviceList[i].Description} (Type: {deviceList[i].Type})");
 
                 if (deviceList[i].Description.Contains("RS232-HS") || deviceList[i].Type == FTDI.FT_DEVICE.FT_DEVICE_232H)
                 {
-                    targetIndex = i;
+                    _targetIndex = i;
                     break;
                 }
             }
 
             if (targetIndex == -1)
             {
-                // TODO :: ERROR REVEAL NO SPECIFIC DEVICES FOUND (FT232H)
+                DebugLogger.Log(2, $"[WARN] FTDI Device doesn't exists.");
                 return 0;
             }
 
+            targetIndex = _targetIndex;
+            return devCount;
+        }
+
+        public int Connect()
+        {            
             // Open Divice with Target Index
             FTDI.FT_STATUS status = ftdi.OpenByIndex((uint)targetIndex);
             if (status != FTDI.FT_STATUS.FT_OK)
             {
-                // TODO :: ERROR REVEAL WHILE OPENING DEVICE FROM SPECIFIC INDEX
+                DebugLogger.Log(1, $"[ERROR] Error occured while opening FTDI Device {targetIndex}: {status}");
                 return 0;
             }
 
@@ -188,6 +196,13 @@ namespace Platform.Services
                 }
             }
             return -1;
+        }
+
+        public void Dispose()
+        {
+            DebugLogger.Log(3, $"[DEBUG] Disposing FTDI Device {id} ...");
+            ftdi.Close();
+            ftdi = null;
         }
     }
 }

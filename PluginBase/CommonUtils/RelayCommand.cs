@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace Platform.Utils
+namespace PluginBase.CommonUtils
 {
-    class RelayCommand : ICommand
+    public class RelayCommand : ICommand
     {
         private readonly Action<object> _execute;
         private readonly Predicate<object> _canExecute;

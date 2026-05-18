@@ -6,9 +6,9 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Platform.Utils
+namespace PluginBase.CommonUtils
 {
-    class Notifier: INotifyPropertyChanged
+    public class Notifier: INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 

@@ -1,4 +1,5 @@
-﻿using Platform.Model;
+﻿using OpenCvSharp.Internal.Vectors;
+using Platform.Model;
 using Platform.Utils;
 using PluginBase;
 using System;
@@ -14,8 +15,10 @@ namespace Platform.Services
     interface IPluginService
     {
         int loadPluginPathsAndReturnCount();
-        int getPluginNum();
-        void setPluginNum(int componetNum);
+        int GetPluginNum();
+        void SetPluginNum(int componetNum);
+        IPlugin LoadPlugin(int pluginIndex);
+        public void DetachPlugin();
     }
 
     internal class PluginService : IPluginService
@@ -40,30 +43,35 @@ namespace Platform.Services
             return configModel.pluginPaths.Count;
         }
 
-        public int getPluginNum()
+        public int GetPluginNum()
         {
             return configModel.pluginNum;
         }
 
-        public void setPluginNum(int componentNum)
+        public void SetPluginNum(int componentNum)
         {
             configModel.pluginNum = componentNum;
         }
 
-        public IPlugin loadPlugin(int pluginIndex)
+        public string GetPluginNameFromIndex(int index)
+        {
+            string pluginName = configModel.pluginPaths[index];
+            // 전체 경로에서 확장자 .dll 및 경로 Plugins\ 를 합하여 총 12개 문자 제거
+            pluginName = pluginName.Substring(8, pluginName.Length - 12);
+
+            return pluginName;
+        }
+
+        public IPlugin LoadPlugin(int pluginIndex)
         {
             string pluginPath = configModel.pluginPaths[pluginIndex];
 
             return DLLLoader.CreateCommand<IPlugin>(pluginPath);
         }
 
-        public string GetPluginNameFromIndex(int index)
+        public void DetachPlugin()
         {
-            string pluginName = configModel.pluginPaths[index];
-            // 전체 경로에서 확장자 .dll 및 경로 Plugins\ 를 합하여 총 12 제거
-            pluginName = pluginName.Substring(8, pluginName.Length - 12);
 
-            return pluginName;
         }
     }
 }

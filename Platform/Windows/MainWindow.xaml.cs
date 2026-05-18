@@ -2,6 +2,7 @@
 using Platform.Services;
 using Platform.Utils;
 using Platform.ViewModel;
+using PluginBase.CommonUtils;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;

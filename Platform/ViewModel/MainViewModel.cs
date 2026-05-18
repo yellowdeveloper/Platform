@@ -2,6 +2,7 @@
 using Platform.Services;
 using Platform.Utils;
 using PluginBase;
+using PluginBase.CommonUtils;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -9,6 +10,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
 
@@ -21,13 +23,12 @@ namespace Platform.ViewModel
         public PluginViewModel pluginViewModel { get; }
 
         public object _pluginUI;
-        public ISerial _pluginSerial;
-        private int lastPluginIndex;
         public ObservableCollection<PluginComponent> plugins { get; } = new ObservableCollection<PluginComponent>();
 
         private readonly DispatcherTimer _dateTimer = new DispatcherTimer();
 
         private ConfigService configService;
+        private SerialService serialService;
         private PluginService pluginService;
 
         private string _displayTime;
@@ -60,13 +61,15 @@ namespace Platform.ViewModel
             var _configService = new ConfigService(_configModel);
             var _pluginService = new PluginService(_configModel);
             var _serialService = new SerialService();
-            var _ftdiService = new FTDIService();
+            var _spiService    = new SPIService();
 
+            var _communicationFacade = new CommunicationFacade(_serialService, _spiService, _configService);
 
             configService = _configService;
+            serialService = _serialService;
             pluginService = _pluginService;
 
-            setupViewModel = new SetupViewModel(configService);
+            setupViewModel = new SetupViewModel(_communicationFacade, _serialService, _spiService);
             pluginViewModel = new PluginViewModel(configService);
 
             _dateTimer.Interval = TimeSpan.FromSeconds(1.0);
@@ -78,8 +81,8 @@ namespace Platform.ViewModel
 
         private void InitializeComponent()
         {
-            pluginService.setPluginNum(pluginService.loadPluginPathsAndReturnCount());
-            pluginNum = pluginService.getPluginNum();
+            pluginService.SetPluginNum(pluginService.loadPluginPathsAndReturnCount());
+            pluginNum = pluginService.GetPluginNum();
             DebugLogger.Log(3, $"[DEBUG] number of plugins : {pluginNum}");
 
             if (pluginNum > 0)
@@ -95,8 +98,8 @@ namespace Platform.ViewModel
 
         public void IncreaseComponentNum()
         {
-            pluginService.setPluginNum(pluginNum += 1);
-            pluginService.getPluginNum();
+            pluginService.SetPluginNum(pluginNum += 1);
+            pluginService.GetPluginNum();
         }
 
         public void CreateNewComponent(int _pluginIndex, string _pluginName = "New")
@@ -114,15 +117,40 @@ namespace Platform.ViewModel
             {
                 IPlugin nowPlugin;
                 IUI nowUI;
-                nowPlugin = pluginService.loadPlugin(_plugin.pluginIndex);
-                nowUI = nowPlugin.GetUIPlugins();
+
+                nowPlugin = pluginService.LoadPlugin(_plugin.pluginIndex);
+                nowUI = nowPlugin.GetUIPlugins(serialService);
+
                 pluginUI = nowUI.GetPluginUI();
+
+                nowUI.CloseRequested += OnPluginCloseRequested;
+
                 DebugLogger.Log(3, $"[DEBUG] Plugin [ID.{_plugin.pluginIndex} - {_plugin.pluginName}] Loadded Succesfully!");
             }
             catch (Exception ex)
             {
                 DebugLogger.Log(1, $"[ERROR] Error Occurred while loading plugins !!"
                     + $"Exception Message\n::{ex}\n");
+            }
+        }
+
+        private void OnPluginCloseRequested(object sender, EventArgs e)
+        {
+            if (sender is IUI closedUI)
+            {
+                closedUI.CloseRequested -= OnPluginCloseRequested;
+
+                if (pluginUI is UIElement uiElement)
+                {
+                    pluginUI = null;
+                }
+
+                if (closedUI is IDisposable disposableUI)
+                {
+                    disposableUI.Dispose();
+                }
+
+                DebugLogger.Log(3, "[DEBUG] Plugin has been closed and removed from UI.");
             }
         }
 
