@@ -59,5 +59,10 @@ namespace Platform.Services
 
             return null;
         }
+
+        public string[] GetDeviceList()
+        {
+            return serialDevices.Keys.Select(id => $"{id}").ToArray();
+        }
     }
 }

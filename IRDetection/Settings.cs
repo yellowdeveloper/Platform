@@ -11,7 +11,7 @@ namespace IRDetection
     {
         private int _deviceID = 1;
 
-        private int _devicePortID = 0;
+        private int _devicePortID;
         private int _resolution_x = 640;
         private int _resolution_y = 480;
         private int _numOfData = 1025;
@@ -19,7 +19,8 @@ namespace IRDetection
         private float _minTemp = 20.0f;
         private float _maxTemp = 40.0f;
 
-        private int _serialPortID = 0;
+        private int _serialPortID;
+        private int _spiPortID;
         private int _probThres = 50;
 
         private int _sendMod = 0;
@@ -84,6 +85,11 @@ namespace IRDetection
         {
             get { return _serialPortID; }
             set { _serialPortID = value; OnPropertyChanged(); }
+        }
+        public int spiPortID
+        {
+            get { return _spiPortID; }
+            set { _spiPortID = value; OnPropertyChanged(); }
         }
         public int probThres
         {

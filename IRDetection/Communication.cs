@@ -10,7 +10,7 @@ using System.Windows;
 
 namespace IRDetection
 {
-    public interface IISerial : ISerial
+    public interface IICommunication : ICommunication
     {
         public event Action<float, float, List<OpenCvSharp.Rect>, List<int>, List<int>> PointsReceived;
         public void Dispose();
@@ -23,7 +23,7 @@ namespace IRDetection
     /// <summary>
     /// 시리얼 수신 버퍼 처리 담당 인터페이스
     /// </summary>
-    public class Serial : IISerial
+    public class Communication : IICommunication
     {
         private ISerialDevice device;
         private ISerialService service;
@@ -45,7 +45,7 @@ namespace IRDetection
         /// <param name="_settings">
         /// 통신 및 디스플레이에 필요한 모든 설정값을 담고 있는 객체의 인스턴스.
         /// </param>
-        public Serial(ISerialService _service, Settings _settings)
+        public Communication(ISerialService _service, Settings _settings)
         {
             settings = _settings;
             service = _service;
@@ -76,6 +76,8 @@ namespace IRDetection
         public void PluginDisconnect()
         {
             if (device == null) return;
+            DebugLogger.Log(3, $"[DEBUG] Disconnect with device in IR Detection");
+
 
             device.SetDeviceHandler(null);
             device.DetachSerialEventHandler();
@@ -88,6 +90,7 @@ namespace IRDetection
 
         public void FindValidData()
         {
+            DebugLogger.Log(3, $"[DEBUG] *Function In* FindValidData entered");
             ReadOnlySpan<byte> bufferSpan = CollectionsMarshal.AsSpan(receivedBuffer);
 
             int headerIndex = bufferSpan.IndexOf(header);
@@ -134,6 +137,7 @@ namespace IRDetection
 
         public void ParseReceivedData()
         {
+            DebugLogger.Log(3, $"[DEBUG] *Function In* ParseReceivedData entered");
             List<OpenCvSharp.Rect> receivedRects = new List<OpenCvSharp.Rect>();
             List<int> receivedCls = new List<int>();
             List<int> receivedProbs = new List<int>();
@@ -164,6 +168,8 @@ namespace IRDetection
 
         private void ParseDetectionResult(int detectedCount, List<OpenCvSharp.Rect> receivedRects, List<int> receivedCls, List<int> receivedProbs)
         {
+            DebugLogger.Log(3, $"[DEBUG] *Function In* ParseDetectionResult entered");
+
             for (int i = 0; i < detectedCount; i++)
             {
                 byte[] rectData = validData.Take(10).ToArray();
@@ -215,6 +221,7 @@ namespace IRDetection
 
         private void ParseConsumption(int validDataLen, out float power, out float ampere)
         {
+            DebugLogger.Log(3, $"[DEBUG] *Function In* ParseConsumption entered");
             byte[] powerByte = new byte[4];
             byte[] ampereByte = new byte[4];
 
@@ -245,7 +252,7 @@ namespace IRDetection
             validData.Clear();
         }
 
-        ~Serial()
+        ~Communication()
         {
             DebugLogger.Log(3, $"[DEBUG] Disposing IRDetection Serial Interface");
         }

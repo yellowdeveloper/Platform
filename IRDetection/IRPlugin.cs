@@ -12,7 +12,7 @@ public class IRPlugin : IPlugin
     public string PluginName => "Anemia Prediction";
 
     private IUI uiInterface;
-    private IISerial serialInterface;
+    private IICommunication communicationInterface;
 
     // public ISerial GetSerialPlugins(ISerialService service)
     // {
@@ -24,8 +24,8 @@ public class IRPlugin : IPlugin
     {
         var settings = new Settings();
 
-        serialInterface = new Serial(service, settings);
-        uiInterface = new UI(serialInterface, settings);
+        communicationInterface = new Communication(service, settings);
+        uiInterface = new UI(communicationInterface, settings);
         
         return uiInterface;
     }
@@ -33,20 +33,20 @@ public class IRPlugin : IPlugin
 
 public class UI : IUI
 {
-    private readonly IISerial serial;
+    private readonly IICommunication communication;
     private readonly Settings settings;
     public event EventHandler CloseRequested;
 
-    public UI(IISerial _serial, Settings _settings)
+    public UI(IICommunication _communication, Settings _settings)
     {
-        serial = _serial;
+        communication = _communication;
         settings = _settings;
     }
 
     public object GetPluginUI()
     {
         var view = new PluginUI();
-        var viewModel = new ViewModel(serial, settings);
+        var viewModel = new ViewModel(communication, settings);
 
         view.DataContext = viewModel;
 

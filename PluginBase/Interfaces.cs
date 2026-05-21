@@ -9,7 +9,7 @@ public interface IPlugin
     IUI GetUIPlugins(ISerialService service);
 }
 
-public interface ISerial
+public interface ICommunication
 {
     byte[] header { get; }
     byte[] footer { get; }
@@ -35,7 +35,7 @@ public interface IAdd_Ons
 // 여기부터 메인에서 정의할 인터페이스 (플러그인에서 사용)
 public interface ISerialDevice
 {
-    public void SetDeviceHandler(ISerial _serialHandler);
+    public void SetDeviceHandler(ICommunication _serialHandler);
     public void AttachSerialEventHandler();
     public void DetachSerialEventHandler();
 }
@@ -43,4 +43,15 @@ public interface ISerialDevice
 public interface ISerialService
 {
     public ISerialDevice GetDevice(int id);
+    public string[] GetDeviceList();
+}
+
+public interface ISPIDevice
+{
+
+}
+
+public interface  ISPIService
+{
+    public int[] GetDeviceList();
 }

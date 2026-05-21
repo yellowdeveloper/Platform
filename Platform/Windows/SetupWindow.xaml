@@ -82,7 +82,8 @@
                                           Margin="10,0,0,0" FontSize="10" FontWeight="Normal"
                                           VerticalAlignment="Center" HorizontalAlignment="Left"
                                           CornerRadius="5" Style="{StaticResource DefaultButton}"
-                                          BorderBrush="Black" BorderThickness="1">
+                                          BorderBrush="Black" BorderThickness="1"
+                                          Command="{Binding SPIConnectionButtonCommand}">
                             <TextBlock Text="Connect" TextAlignment="Center" Margin="2.5" FontWeight="DemiBold"/>
                         </commonUtil:RoundButton>
 
@@ -90,7 +91,7 @@
                                    VerticalAlignment="Center" HorizontalAlignment="Left"/>
                         <Border Grid.Row="1" Grid.Column="1" BorderBrush="LightGray"
                                 BorderThickness="1" Margin="0,5,20,5" CornerRadius="2.5">
-                            <TextBlock Text="{Binding spiDevice}" Foreground="Black"
+                            <TextBlock Text="{Binding spiDevice, StringFormat=SPI {0}}" Foreground="Black"
                                        VerticalAlignment="Center" HorizontalAlignment="Center"/>
                         </Border>
                         <TextBlock Grid.Row="1" Grid.Column="2" Text="●"

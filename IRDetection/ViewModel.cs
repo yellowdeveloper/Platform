@@ -12,12 +12,14 @@ namespace IRDetection
 {
     internal class ViewModel : Notifier
     {
-        private readonly IISerial serial;
-        private readonly Settings settings;
+        private readonly IICommunication serial;
+        public Settings settings { get; }
+
+        
 
         public ICommand ConnectCommand { get; }
 
-        public ViewModel(IISerial _serial, Settings _settings)
+        public ViewModel(IICommunication _serial, Settings _settings)
         {
             serial = _serial;
             settings = _settings;
@@ -26,7 +28,7 @@ namespace IRDetection
 
             ConnectCommand = new RelayCommand(param =>
             {
-                serial.PluginConnect(1);
+                serial.PluginConnect(settings.serialPortID);
             });
         }
 

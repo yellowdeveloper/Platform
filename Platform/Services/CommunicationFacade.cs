@@ -1,5 +1,6 @@
 ﻿using OpenCvSharp.Aruco;
 using Platform.Model;
+using PluginBase.CommonUtils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,8 +33,8 @@ namespace Platform.Services
                     baudRate = 115200,
                     dataBits = 8,
                     parity = 0,
-                    stopBits = 0,
-                    dtrEnable = false
+                    stopBits = 1,
+                    dtrEnable = true
                 }
             ).ToList();
 
@@ -42,18 +43,12 @@ namespace Platform.Services
             return configs;
         }
 
-        public Dictionary<int, string> InitializeSPIDevices()
+        public int[] InitializeSPIDevices()
         {
-            int deviceCount = 0;
+            int[] devices = spiService.GetFTDIDeviceList();
 
-            deviceCount = spiService.getAvailablePorts();
-
-            Dictionary<int, string> devices = new();
-
-            for (int i = 0; i < deviceCount; i++)
-            {
-                devices[i] = $"FTDI {i}";
-            }
+            if (devices == null)
+                return Array.Empty<int>();
 
             return devices;
         }

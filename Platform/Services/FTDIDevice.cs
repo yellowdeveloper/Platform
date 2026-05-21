@@ -1,5 +1,6 @@
 ﻿using FTD2XX_NET;
 using Platform.Model;
+using PluginBase;
 using PluginBase.CommonUtils;
 using System;
 using System.Collections.Generic;
@@ -10,66 +11,29 @@ using System.Threading.Tasks;
 
 namespace Platform.Services
 {
-    internal class FTDIDevice
+    internal class FTDIDevice : ISPIDevice
     {
         public int id { get; }
         public FTDI ftdi { get; set; }
 
-        private int targetIndex;
+        private int locationID;
 
         public FTDIDevice(int _id)
         {
             id = _id;
-            ftdi = new FTDI(); ;
+            ftdi = new FTDI();
         }
 
-        public uint searchDevice()
+        public bool Connect(int _locationID)
         {
-            uint devCount = 0;
-            ftdi.GetNumberOfDevices(ref devCount);
+            locationID = _locationID;
 
-            if (devCount == 0)
-            {
-                DebugLogger.Log(2, $"[WARN] Device doesn't exists.");
-                return 0;
-            }
-
-            // Get FTDI Device List
-            FTDI.FT_DEVICE_INFO_NODE[] deviceList = new FTDI.FT_DEVICE_INFO_NODE[devCount];
-            ftdi.GetDeviceList(deviceList);
-
-            int _targetIndex = -1;
-
-            // Find FT232H or RS232-HS
-            for (int i = id; i < devCount; i++)
-            {
-                DebugLogger.Log(3, $"[DEBUG] Device [{i}]: {deviceList[i].Description} (Type: {deviceList[i].Type})");
-
-                if (deviceList[i].Description.Contains("RS232-HS") || deviceList[i].Type == FTDI.FT_DEVICE.FT_DEVICE_232H)
-                {
-                    _targetIndex = i;
-                    break;
-                }
-            }
-
-            if (targetIndex == -1)
-            {
-                DebugLogger.Log(2, $"[WARN] FTDI Device doesn't exists.");
-                return 0;
-            }
-
-            targetIndex = _targetIndex;
-            return devCount;
-        }
-
-        public int Connect()
-        {            
-            // Open Divice with Target Index
-            FTDI.FT_STATUS status = ftdi.OpenByIndex((uint)targetIndex);
+            // Open Divice with Target Location
+            FTDI.FT_STATUS status = ftdi.OpenByLocation((uint)locationID);
             if (status != FTDI.FT_STATUS.FT_OK)
             {
-                DebugLogger.Log(1, $"[ERROR] Error occured while opening FTDI Device {targetIndex}: {status}");
-                return 0;
+                DebugLogger.Log(1, $"[ERROR] Error occured while opening FTDI Device SPI {locationID}: {status}");
+                return false;
             }
 
             try
@@ -87,9 +51,10 @@ namespace Platform.Services
                 status = ftdi.SetBitMode(0x00, 0x02);
                 if (status != FTDI.FT_STATUS.FT_OK)
                 {
-                    // TODO :: ERROR REVEAL BIT MODE SETTING FAILED
+                    DebugLogger.Log(1, $"[ERROR] Error occured while setting Bit Mode on FTDI Device SPI {locationID}: {status}");
+
                     ftdi.Close();
-                    return 0;
+                    return false;
                 }
 
                 Thread.Sleep(50);
@@ -97,19 +62,21 @@ namespace Platform.Services
                 // MPSSE Setting
                 if (!MPSSEConfig())
                 {
-                    // TODO :: ERROR REVEAL MPSSE SETTING FAILED
+                    DebugLogger.Log(1, $"[ERROR] Error occured while setting MPSSE Config on FTDI Device SPI {locationID}: {status}");
+
                     ftdi.Close();
-                    return 0;
+                    return false;
                 }
 
-                // TODO :: LOG -> CONNECTED LOG
-                return 1;
+                DebugLogger.Log(3, $"[DEBUG] Successfully FTDI Device SPI {locationID}: {status}");
+                return true;
             }
             catch (Exception ex)
             {
-                // TODO :: ERROR REVEAL Unexpected Error while Opening SPI Port
+                DebugLogger.Log(1, $"[ERROR] Error occured while opening FTDI Device SPI {locationID}: {status}" +
+                    $" Exception Message : {ex}");
                 ftdi.Close();
-                return 0;
+                return false;
             }
         }
 

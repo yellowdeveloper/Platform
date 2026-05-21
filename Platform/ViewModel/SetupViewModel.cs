@@ -21,8 +21,7 @@ namespace Platform.ViewModel
         private readonly SPIService spiService;
 
         private List<SerialConfig> serialConfigs = new List<SerialConfig>();
-        private Dictionary<int, string> spiDevices;
-        private List<string> FTDIDevices = new List<string>();
+        private int[] spiDevices;
 
         private int _serialIndex = 0;
         private int _spiIndex = 0;
@@ -31,7 +30,7 @@ namespace Platform.ViewModel
         private bool _spiStat;
 
         public ICommand SerialConnectionButtonCommand { get; }
-        private ICommand SPIConnectCommand { get; }
+        public ICommand SPIConnectionButtonCommand { get; }
 
         public bool serialStat
         {
@@ -78,7 +77,7 @@ namespace Platform.ViewModel
             get { return serialConfigs[serialIndex]; }
             set { serialConfigs[serialIndex] = value; OnPropertyChanged(); }
         }
-        public string spiDevice
+        public int spiDevice
         {
             get { return spiDevices[spiIndex]; }
             set { spiDevices[spiIndex] = value; OnPropertyChanged(); }
@@ -100,6 +99,17 @@ namespace Platform.ViewModel
                 {
                     serialService.Disconnect(serialIndex);
                     serialStat = false;
+                }
+            });
+
+            SPIConnectionButtonCommand = new RelayCommand(param => {
+
+                if (!spiStat)
+                    spiStat = spiService.Connect(spiDevices[spiIndex]);
+                else
+                {
+                    spiService.Disconnect(spiDevices[spiIndex]);
+                    spiStat = false;
                 }
             });
         }
@@ -145,10 +155,10 @@ namespace Platform.ViewModel
 
         public void IncreaseSPIIndex()
         {
-            if (spiIndex < spiDevices.Count - 1) ++spiIndex;
+            if (spiIndex < spiDevices.Length - 1) ++spiIndex;
             else spiIndex = 0;
 
-            spiStat = spiService.isSPIDeviceExists(spiIndex);
+            spiStat = spiService.IsSPIDeviceExists(spiDevices[spiIndex]);
 
             OnPropertyChanged(nameof(spiDevice));
             DebugLogger.Log(3, $"[DEBUG] Now Pointing SPI Device {spiIndex}");
@@ -157,9 +167,9 @@ namespace Platform.ViewModel
         public void DecreaseSPIIndex()
         {
             if (spiIndex > 0) spiIndex--;
-            else spiIndex = spiDevices.Count - 1;
+            else spiIndex = spiDevices.Length - 1;
 
-            spiStat = spiService.isSPIDeviceExists(spiIndex);
+            spiStat = spiService.IsSPIDeviceExists(spiDevices[spiIndex]);
 
             OnPropertyChanged(nameof(spiDevice));
             DebugLogger.Log(3, $"[DEBUG] Now Pointing SPI Device {spiIndex}");

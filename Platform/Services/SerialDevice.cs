@@ -15,7 +15,7 @@ namespace Platform.Services
     {
         private SerialPort sp { get; set; }
 
-        private ISerial serialHandler;
+        private ICommunication serialHandler;
 
         public SerialDevice(SerialConfig serialConfig)
         {
@@ -68,7 +68,7 @@ namespace Platform.Services
             }
         }
 
-        public void SetDeviceHandler(ISerial _serialHandler)
+        public void SetDeviceHandler(ICommunication _serialHandler)
         {
             DebugLogger.Log(3, "[DEBUG] Device Handler successfully attatched!!");
             serialHandler = _serialHandler;
@@ -95,6 +95,14 @@ namespace Platform.Services
                 int bytesToRead = sp.BytesToRead;
                 byte[] buffer = new byte[bytesToRead];
                 int actuallyRead = sp.Read(buffer, 0, bytesToRead);
+
+                DebugLogger.Log(3, $"[DEBUG] Serial Buffer :: ");
+                Console.WriteLine("");
+                for (int i = 0; i < buffer.Length; i++)
+                {
+                    Console.Write($"{buffer[i]:X2}");
+                }
+                Console.WriteLine("");
 
                 if (actuallyRead > 0)
                 {

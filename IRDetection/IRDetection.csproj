@@ -10,6 +10,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Iot.Device.Bindings" Version="4.2.0" />
     <PackageReference Include="OpenCvSharp4" Version="4.13.0.20260318" />
     <PackageReference Include="OpenCvSharp4.Extensions" Version="4.13.0.20260318" />
@@ -23,6 +27,14 @@
       <Private>false</Private>
       <ExcludeAssets>runtime</ExcludeAssets>
     </Projectreference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\DoksanNPU.png" />
+    <EmbeddedResource Include="Resources\IRLogo.png" />
+    <EmbeddedResource Include="Resources\IRSensor.png" />
+    <EmbeddedResource Include="Resources\PCB.png" />
+    <EmbeddedResource Include="Resources\User.png" />
   </ItemGroup>
 
 </Project>
