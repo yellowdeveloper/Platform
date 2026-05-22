@@ -4,6 +4,7 @@ using PluginBase;
 using PluginBase.CommonUtils;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO.Ports;
 using System.Linq;
 using System.Text;
@@ -14,9 +15,18 @@ namespace Platform.Services
     internal class FTDIDevice : ISPIDevice
     {
         public int id { get; }
-        public FTDI ftdi { get; set; }
+        private FTDI ftdi { get; set; }
 
         private int locationID;
+        // 라이브러리 지정 사용 구현 보류
+        /// <summary>
+        /// 타입이 0이면, FTD2XX 라이브러리 사용 (SPI 고속 통신)
+        /// 타입이 1이면, Iot.Device.FtCommon 라이브러리 사용 (안정성은 낮으나, SPI 모드를 전부 이용 가능.)
+        /// </summary>
+        // private int libType;
+
+        private ISPIDeviceHandler spiDeviceHandler;
+        event EventHandler spiSendRequested;
 
         public FTDIDevice(int _id)
         {
@@ -68,7 +78,7 @@ namespace Platform.Services
                     return false;
                 }
 
-                DebugLogger.Log(3, $"[DEBUG] Successfully FTDI Device SPI {locationID}: {status}");
+                DebugLogger.Log(3, $"[DEBUG] Successfully Connected to FTDI Device SPI {locationID}: {status}");
                 return true;
             }
             catch (Exception ex)
@@ -138,6 +148,70 @@ namespace Platform.Services
             uint bytesWritten = 0;
             byte[] cmd = { 0x80, 0x08, 0xFB };
             ftdi.Write(cmd, cmd.Length, ref bytesWritten);
+        }
+        public void SetDeviceHandler(ISPIDeviceHandler _spiDeviceHandler)
+        {
+            DebugLogger.Log(3, "[DEBUG] SPI Device Handler successfully attatched!!");
+            spiDeviceHandler = _spiDeviceHandler;
+        }
+        public void AttachSPIEventHandler()
+        {
+
+        }
+        public void DetachSPIEventHandler()
+        {
+            
+        }
+
+        public void Send(SPIPacket packet, int _chunkSize)
+        {
+            int chunkSize = _chunkSize;
+            int chunkSendCount = packet.DataLength / chunkSize;
+            uint bytesWritten = 0;
+
+            byte[] txBuffer = new byte[chunkSize + 3];
+
+            txBuffer[0] = 0x11;                      // send cmd
+
+            int len = chunkSize - 1;
+
+            // Packet length
+            txBuffer[1] = (byte)(len & 0xFF);        // Low Byte
+            txBuffer[2] = (byte)((len >> 8) & 0xFF); // High Byte
+
+            try
+            {
+                // [CS Low] Comm Start (ADBUS3 = 0)
+                // 0x80(GPIO Setting) + 0x00(CS Low, 나머지 Low) + 0xFB(Direction)
+                SetCS_Low();
+
+                for (int i = 0; i < chunkSendCount; i++)
+                {
+                    int offset = i * chunkSize;
+                    
+                    // Copy and send with SPI
+                    Buffer.BlockCopy(packet.Data, offset, txBuffer, 3, chunkSize);
+                    FTDI.FT_STATUS status = ftdi.Write(txBuffer, txBuffer.Length, ref bytesWritten);
+
+                    if (status != FTDI.FT_STATUS.FT_OK)
+                    {
+                        DebugLogger.Log(1, $"[ERROR] SPI Write Failed at offset {offset}: {status}");
+                        break;
+                    }
+                }
+
+                // [CS High] Comm Start (ADBUS3 = 1)
+                // 0x80(GPIO Setting) + 0x08(CS High) + 0xFB(Direction)
+                SetCS_High();
+
+                DebugLogger.Log(3, $"[DEBUG] SPI Image Transfer Complete. Total: {packet.DataLength} bytes");
+            }
+            catch (Exception ex)
+            {
+                DebugLogger.Log(1, $"[ERROR] in SendImageFragment_SPI: {ex.Message}");
+                SetCS_High();
+                Disconnect();
+            }
         }
 
         public int Disconnect()

@@ -1,12 +1,13 @@
-﻿using System;
+﻿using Iot.Device.Ft232H;
+using Iot.Device.FtCommon;
+using PluginBase.CommonUtils;
+using System;
 using System.Collections.Generic;
+using System.Device.Gpio;
+using System.Device.Spi;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Device.Gpio;
-using System.Device.Spi;
-using Iot.Device.Ft232H;
-using Iot.Device.FtCommon;
 
 namespace IRDetection.IRDevices
 {
@@ -25,6 +26,7 @@ namespace IRDetection.IRDevices
         byte[] tmp = new byte[39360];
 
         private CancellationTokenSource _cts;
+        private int locID;
 
         int imageIndexCount = 0;
         int readIndexCount = -1;
@@ -33,8 +35,10 @@ namespace IRDetection.IRDevices
 
         public event Action<byte[]> FrameUpdate;
 
-        public void LeptonInitialize()
+        public void LeptonInitialize(int _locID)
         {
+            locID = _locID;
+
             Connect();
             _cts = new CancellationTokenSource();
             Task.Run(() => CommunicateLepton3(_cts.Token));
@@ -44,26 +48,15 @@ namespace IRDetection.IRDevices
         {
             //SPI Connect
             var devices = FtCommon.GetDevices();
-            if (devices.Count == 0)
+            var targetDevice = devices.FirstOrDefault(d => d.LocId == locID);
+
+            if (targetDevice == null)
             {
+                DebugLogger.Log(1, $"[ERROR] LocID {locID}에 해당하는 장치를 찾을 수 없습니다.");
                 return 0;
             }
 
-            foreach (var device in devices)
-            {
-                Console.Write($"- ID: {device.Id}, Type: {device.Type}, Description: {device.Description}\n");
-            }
-            Console.WriteLine();
-
-            var ftdi_deviceInfo = devices.FirstOrDefault(d => d.Description.Contains("RS232-HS"));
-            //var ftdi_deviceInfo = devices.FirstOrDefault(d => d.Type == FtDeviceType.Ft2232H);
-
-            if (ftdi_deviceInfo == null)
-            {
-                return 0;
-            }
-
-            ft232h = new Ft232HDevice(ftdi_deviceInfo);
+            ft232h = new Ft232HDevice(targetDevice);
 
             settings = new SpiConnectionSettings(0, 3)
             {

@@ -1,4 +1,6 @@
-﻿namespace PluginBase;
+﻿using PluginBase.CommonUtils;
+
+namespace PluginBase;
 
 // 여기부터 플러그인에서 정의할 인터페이스 (메인에서 사용)
 public interface IPlugin
@@ -6,18 +8,25 @@ public interface IPlugin
     string PluginName { get; }
 
     //ISerial GetSerialPlugins(ISerialService service);
-    IUI GetUIPlugins(ISerialService service);
+    IUI GetUIPlugins(ISerialService serialService, ISPIService spiService);
 }
 
-public interface ICommunication
+public interface ISerialDeviceHandler
 {
     byte[] header { get; }
     byte[] footer { get; }
-    void PluginConnect(int id);
-    void PluginDisconnect();
+
+    void SerialConnect(int id);
+    void SerialDisconnect();
     void StackReceivedBuffer(byte[] dataBytes, int actuallyRead);
     void FindValidData();
     void ParseReceivedData();
+}
+
+public interface ISPIDeviceHandler
+{
+    void SPIConnect(int id);
+    void SPIDisconnect();
 }
 
 public interface IUI
@@ -35,23 +44,28 @@ public interface IAdd_Ons
 // 여기부터 메인에서 정의할 인터페이스 (플러그인에서 사용)
 public interface ISerialDevice
 {
-    public void SetDeviceHandler(ICommunication _serialHandler);
-    public void AttachSerialEventHandler();
-    public void DetachSerialEventHandler();
+    void SetDeviceHandler(ISerialDeviceHandler _serialHandler);
+    void AttachSerialEventHandler();
+    void DetachSerialEventHandler();
 }
 
 public interface ISerialService
 {
-    public ISerialDevice GetDevice(int id);
-    public string[] GetDeviceList();
+    ISerialDevice GetDevice(int id);
+    int[] GetDeviceList();
 }
 
 public interface ISPIDevice
 {
+    void SetDeviceHandler(ISPIDeviceHandler _serialHandler);
+    void AttachSPIEventHandler();
+    void DetachSPIEventHandler();
+    void Send(SPIPacket packet, int _chunkSize);
 
 }
 
 public interface  ISPIService
 {
-    public int[] GetDeviceList();
+    ISPIDevice GetDevice(int id);
+    int[] GetDeviceList();
 }

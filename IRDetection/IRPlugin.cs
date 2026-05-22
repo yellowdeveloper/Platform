@@ -7,25 +7,35 @@ using OpenCvSharp;
 
 namespace IRDetection;
 
+public enum ESendStatus
+{
+    NotReady,
+    Idle,
+    Sending,
+    WaitingForResponse
+} 
+
 public class IRPlugin : IPlugin
 {
     public string PluginName => "Anemia Prediction";
 
     private IUI uiInterface;
-    private IICommunication communicationInterface;
+    private IISerialDeviceHandler serialInterface;
+    private IISPIDeviceHandler spiInterface;
 
     // public ISerial GetSerialPlugins(ISerialService service)
     // {
     //     _serialInterface = new Serial(service);
     //     return _serialInterface;
     // }
-    
-    public IUI GetUIPlugins(ISerialService service)
+
+    public IUI GetUIPlugins(ISerialService serialService, ISPIService spiService)
     {
         var settings = new Settings();
 
-        communicationInterface = new Communication(service, settings);
-        uiInterface = new UI(communicationInterface, settings);
+        serialInterface = new SerialDeviceHandler(serialService, settings);
+        spiInterface = new SPIDeviceHandler(spiService, settings);
+        uiInterface = new UI(serialInterface, spiInterface, settings);
         
         return uiInterface;
     }
@@ -33,20 +43,23 @@ public class IRPlugin : IPlugin
 
 public class UI : IUI
 {
-    private readonly IICommunication communication;
+    private readonly IISerialDeviceHandler serialDeviceHandler;
+    private readonly IISPIDeviceHandler spiDeviceHandler;
+
     private readonly Settings settings;
     public event EventHandler CloseRequested;
 
-    public UI(IICommunication _communication, Settings _settings)
+    public UI(IISerialDeviceHandler _serialDeviceHandler, IISPIDeviceHandler _spiDeviceHandler,  Settings _settings)
     {
-        communication = _communication;
+        serialDeviceHandler = _serialDeviceHandler;
+        spiDeviceHandler = _spiDeviceHandler;
         settings = _settings;
     }
 
     public object GetPluginUI()
     {
         var view = new PluginUI();
-        var viewModel = new ViewModel(communication, settings);
+        var viewModel = new ViewModel(serialDeviceHandler, spiDeviceHandler, settings);
 
         view.DataContext = viewModel;
 

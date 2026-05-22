@@ -15,7 +15,7 @@ namespace Platform.Services
     {
         private SerialPort sp { get; set; }
 
-        private ICommunication serialHandler;
+        private ISerialDeviceHandler serialDeviceHandler;
 
         public SerialDevice(SerialConfig serialConfig)
         {
@@ -68,10 +68,10 @@ namespace Platform.Services
             }
         }
 
-        public void SetDeviceHandler(ICommunication _serialHandler)
+        public void SetDeviceHandler(ISerialDeviceHandler _serialDeviceHandler)
         {
-            DebugLogger.Log(3, "[DEBUG] Device Handler successfully attatched!!");
-            serialHandler = _serialHandler;
+            DebugLogger.Log(3, "[DEBUG] Serial Device Handler successfully attatched!!");
+            serialDeviceHandler = _serialDeviceHandler;
         }
         public void AttachSerialEventHandler()
         {
@@ -106,11 +106,10 @@ namespace Platform.Services
 
                 if (actuallyRead > 0)
                 {
-                    serialHandler?.StackReceivedBuffer(buffer, actuallyRead);
-                    serialHandler?.FindValidData();
-                    serialHandler?.ParseReceivedData();
+                    serialDeviceHandler?.StackReceivedBuffer(buffer, actuallyRead);
+                    serialDeviceHandler?.FindValidData();
+                    serialDeviceHandler?.ParseReceivedData();
                 }
-
             }
             catch (Exception ex)
             {

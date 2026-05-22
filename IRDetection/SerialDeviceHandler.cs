@@ -1,5 +1,6 @@
 ﻿using PluginBase;
 using PluginBase.CommonUtils;
+using FTD2XX_NET;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,9 +11,10 @@ using System.Windows;
 
 namespace IRDetection
 {
-    public interface IICommunication : ICommunication
+    public interface IISerialDeviceHandler : ISerialDeviceHandler
     {
         public event Action<float, float, List<OpenCvSharp.Rect>, List<int>, List<int>> PointsReceived;
+        public int[] GetSerialDeviceList();
         public void Dispose();
     }
     // 시리얼 인터페이스는 외부에 노출하지 않음.
@@ -23,10 +25,11 @@ namespace IRDetection
     /// <summary>
     /// 시리얼 수신 버퍼 처리 담당 인터페이스
     /// </summary>
-    public class Communication : IICommunication
+    public class SerialDeviceHandler : IISerialDeviceHandler
     {
-        private ISerialDevice device;
-        private ISerialService service;
+        private ISerialDevice serialDevice;
+        private ISerialService serialService;
+
         private readonly Settings settings;
 
         private List<byte> receivedBuffer = new List<byte>();
@@ -45,10 +48,10 @@ namespace IRDetection
         /// <param name="_settings">
         /// 통신 및 디스플레이에 필요한 모든 설정값을 담고 있는 객체의 인스턴스.
         /// </param>
-        public Communication(ISerialService _service, Settings _settings)
+        public SerialDeviceHandler(ISerialService _serialService, Settings _settings)
         {
             settings = _settings;
-            service = _service;
+            serialService = _serialService;
         }
 
         public byte[] header { get; } = new byte[] { 0x10, 0x01, 0x10, 0x01 };
@@ -58,29 +61,29 @@ namespace IRDetection
         /// </summary>
         public int checkValidDataLength = 10;
 
-        public void PluginConnect(int id)
+        public void SerialConnect(int id)
         {
-            device = service.GetDevice(id);
-            if (device == null)
+            serialDevice = serialService.GetDevice(id);
+            if (serialDevice == null)
             {
                 DebugLogger.Log(1, $"[ERROR] Device doesn't exists.");
                 return;
             }
-            DebugLogger.Log(3, $"[DEBUG] Device No.{id} Plugin Connection Operated ...");
+            DebugLogger.Log(3, $"[DEBUG] Serial Device No.{id} Plugin Connection Operated ...");
 
-            device.SetDeviceHandler(this);
-            device.AttachSerialEventHandler();
+            serialDevice.SetDeviceHandler(this);
+            serialDevice.AttachSerialEventHandler();
 
         }
 
-        public void PluginDisconnect()
+        public void SerialDisconnect()
         {
-            if (device == null) return;
-            DebugLogger.Log(3, $"[DEBUG] Disconnect with device in IR Detection");
+            if (serialDevice == null) return;
+            DebugLogger.Log(3, $"[DEBUG] Disconnect with serial device in IR Detection");
 
 
-            device.SetDeviceHandler(null);
-            device.DetachSerialEventHandler();
+            serialDevice.SetDeviceHandler(null);
+            serialDevice.DetachSerialEventHandler();
         }
 
         public void StackReceivedBuffer(byte[] dataByte, int actuallyRead)
@@ -246,13 +249,18 @@ namespace IRDetection
 
         public void Dispose()
         {
-            PluginDisconnect();
+            SerialDisconnect();
 
             receivedBuffer.Clear();
             validData.Clear();
         }
 
-        ~Communication()
+        public int[] GetSerialDeviceList()
+        {
+            return serialService.GetDeviceList();
+        }
+
+        ~SerialDeviceHandler()
         {
             DebugLogger.Log(3, $"[DEBUG] Disposing IRDetection Serial Interface");
         }

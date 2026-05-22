@@ -97,11 +97,16 @@
                                         <TextBlock Text="Sensor Settings" VerticalAlignment="Center" HorizontalAlignment="Left"
                                                    FontFamily="Bahnschrift SemiBold SemiCondensed" FontSize="14"/>
                                         <TextBlock Text="Device ID" FontFamily="Bahnschrift" VerticalAlignment="Bottom"/>
-                                        <TextBox Text="{Binding settings.deviceID, UpdateSourceTrigger=LostFocus, Mode=TwoWay}"
-                                                 TextAlignment="Left" Margin="0,0,15,0" FontFamily="Bahnschrift Light"
-                                                 VerticalAlignment="Top" HorizontalAlignment="Stretch"
-                                                 BorderBrush="Transparent" BorderThickness="0"/>
+                                        <ComboBox Grid.Column="1" Margin="0,0,15,0"  FontFamily="Bahnschrift Light"
+                                                  VerticalAlignment="Top" HorizontalContentAlignment="Stretch"
+                                                  SelectedIndex="{Binding settings.deviceID, UpdateSourceTrigger=LostFocus, Mode=TwoWay}">
+                                            <ComboBoxItem Content="DTPA"/>
+                                            <ComboBoxItem Content="Lepton"/>
+                                        </ComboBox>
                                         <TextBlock Text="Device Port ID" FontFamily="Bahnschrift" VerticalAlignment="Bottom"/>
+                                        <!--ComboBox Grid.Column="1" Margin="0,0,15,0"  ItemsSource="{Binding spiDevices}" VerticalAlignment="Top"
+                                                  SelectedItem="{Binding settings.devicePortID, UpdateSourceTrigger=LostFocus, Mode=TwoWay}"
+                                                  HorizontalContentAlignment="Stretch" FontFamily="Bahnschrift Light"/-->
                                         <TextBox Text="{Binding settings.devicePortID, UpdateSourceTrigger=LostFocus, Mode=TwoWay}"
                                                  TextAlignment="Left" Margin="0,0,15,0" FontFamily="Bahnschrift Light"
                                                  VerticalAlignment="Top" HorizontalAlignment="Stretch"
@@ -118,15 +123,13 @@
                                         <TextBlock Text="NPU Board Settings" VerticalAlignment="Center" HorizontalAlignment="Left"
                                                FontFamily="Bahnschrift SemiBold SemiCondensed" FontSize="14"/>
                                         <TextBlock Text="Serial Port ID" FontFamily="Bahnschrift" VerticalAlignment="Bottom"/>
-                                        <TextBox Text="{Binding settings.serialPortID, UpdateSourceTrigger=LostFocus, Mode=TwoWay}"
-                                                 TextAlignment="Left" Margin="0,0,30,0" FontFamily="Bahnschrift Light"
-                                             VerticalAlignment="Top" HorizontalAlignment="Stretch"
-                                             BorderBrush="Transparent" BorderThickness="0"/>
+                                        <ComboBox Grid.Column="1" Margin="0,0,30,0"  ItemsSource="{Binding serialDevices}" VerticalAlignment="Top"
+                                                  SelectedItem="{Binding settings.serialPortID, UpdateSourceTrigger=LostFocus, Mode=TwoWay}"
+                                                  HorizontalContentAlignment="Stretch" FontFamily="Bahnschrift Light" />
                                         <TextBlock Text="SPI Port ID" FontFamily="Bahnschrift" VerticalAlignment="Bottom"/>
-                                        <TextBox Text="{Binding settings.spiPortID, UpdateSourceTrigger=LostFocus, Mode=TwoWay}"
-                                                 TextAlignment="Left" Margin="0,0,30,0" FontFamily="Bahnschrift Light"
-                                             VerticalAlignment="Top" HorizontalAlignment="Stretch"
-                                             BorderBrush="Transparent" BorderThickness="0"/>
+                                        <ComboBox Grid.Column="1" Margin="0,0,30,0"  ItemsSource="{Binding spiDevices}" VerticalAlignment="Top"
+                                                  SelectedItem="{Binding settings.spiPortID, UpdateSourceTrigger=LostFocus, Mode=TwoWay}"
+                                                  HorizontalContentAlignment="Stretch" FontFamily="Bahnschrift Light" />
                                     </UniformGrid>
                                 </Border>
                                 <UniformGrid Grid.Column="2" Rows="10" Margin="15,0,0,0">
@@ -142,8 +145,8 @@
                                              TextAlignment="Left" Margin="0,0,15,0" FontFamily="Bahnschrift Light"
                                              VerticalAlignment="Top" HorizontalAlignment="Stretch"
                                              BorderBrush="Transparent" BorderThickness="0"/>
-                                    <TextBlock Text="Number Of Data" FontFamily="Bahnschrift" VerticalAlignment="Bottom"/>
-                                    <TextBox Text="{Binding settings.numOfData, UpdateSourceTrigger=LostFocus, Mode=TwoWay}"
+                                    <TextBlock Text="Prob Thres" FontFamily="Bahnschrift" VerticalAlignment="Bottom"/>
+                                    <TextBox Text="{Binding settings.probThres, UpdateSourceTrigger=LostFocus, Mode=TwoWay}"
                                              TextAlignment="Left" Margin="0,0,15,0" FontFamily="Bahnschrift Light"
                                              VerticalAlignment="Top" HorizontalAlignment="Stretch"
                                              BorderBrush="Transparent" BorderThickness="0"/>
@@ -187,7 +190,7 @@
                                        Source="pack://application:,,,/IRDetection;component/Resources/IRSensor.png"/>
                                 <commonUtil:RoundButton Grid.Row="1" VerticalAlignment="Top" HorizontalAlignment="Left"
                                                         Foreground="#000000" BorderBrush="Black" Margin="19,0"
-                                                        Command="{Binding ConnectCommand}" CornerRadius="5" BorderThickness="2"
+                                                        Command="{Binding IRConnectCommand}" CornerRadius="5" BorderThickness="2"
                                                         FontFamily="Bahnschrift SemiBold SemiCondensed">
                                     <TextBlock Text="Connect" Margin="5, 2.5"/>
                                 </commonUtil:RoundButton>
@@ -231,7 +234,7 @@
                                        Source="pack://application:,,,/IRDetection;component/Resources/PCB.png"/>
                                 <commonUtil:RoundButton Grid.Row="1" VerticalAlignment="Top" HorizontalAlignment="Right"
                                                         Foreground="#000000" BorderBrush="Black" Margin="0,0,19,0"
-                                                        Command="{Binding ConnectCommand}" CornerRadius="5" BorderThickness="2"
+                                                        Command="{Binding NPUConnectCommand}" CornerRadius="5" BorderThickness="2"
                                                         FontFamily="Bahnschrift SemiBold SemiCondensed">
                                     <TextBlock Text="Connect" Margin="5, 2.5"/>
                                 </commonUtil:RoundButton>

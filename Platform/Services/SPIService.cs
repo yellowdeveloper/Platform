@@ -16,6 +16,8 @@ namespace Platform.Services
     {
         private readonly Dictionary<int, FTDIDevice> ftdiDevices = new();
 
+        private ISerialDeviceHandler spiDeviceHandler;
+
         public bool Connect(int locID)
         {
             if (ftdiDevices.ContainsKey(locID))
@@ -76,6 +78,14 @@ namespace Platform.Services
         public bool IsSPIDeviceExists(int id)
         {
             return ftdiDevices.ContainsKey(id);
+        }
+
+        public ISPIDevice GetDevice(int id)
+        {
+            if (ftdiDevices.ContainsKey(id))
+                return ftdiDevices[id];
+
+            return null;
         }
 
         public int[] GetDeviceList()

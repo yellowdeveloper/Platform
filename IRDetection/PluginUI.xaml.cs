@@ -1,4 +1,5 @@
-﻿using PluginBase.CommonUtils;
+﻿using OpenCvSharp.ML;
+using PluginBase.CommonUtils;
 using System.IO;
 using System.Reflection;
 using System.Windows;
@@ -29,6 +30,11 @@ public partial class PluginUI : UserControl
 
     private void SettingsButton_Click(object sender, RoutedEventArgs e)
     {
+        if (DataContext is ViewModel viewModel)
+        {
+            viewModel.GetDeviceNum();
+        }
+
         if (SettingsPanel.Visibility == Visibility.Visible)
         {
             SettingsPanel.Visibility = Visibility.Collapsed;

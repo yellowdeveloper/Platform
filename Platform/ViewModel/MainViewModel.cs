@@ -29,12 +29,11 @@ namespace Platform.ViewModel
 
         private ConfigService configService;
         private SerialService serialService;
+        private SPIService    spiService;
         private PluginService pluginService;
 
         private string _displayTime;
         private int _pluginNum;
-
-        ICommand CreateNewComponentCommand;
 
         public object pluginUI
         {
@@ -67,6 +66,7 @@ namespace Platform.ViewModel
 
             configService = _configService;
             serialService = _serialService;
+            spiService    = _spiService;
             pluginService = _pluginService;
 
             setupViewModel = new SetupViewModel(_communicationFacade, _serialService, _spiService);
@@ -119,7 +119,7 @@ namespace Platform.ViewModel
                 IUI nowUI;
 
                 nowPlugin = pluginService.LoadPlugin(_plugin.pluginIndex);
-                nowUI = nowPlugin.GetUIPlugins(serialService);
+                nowUI = nowPlugin.GetUIPlugins(serialService, spiService);
 
                 pluginUI = nowUI.GetPluginUI();
 
