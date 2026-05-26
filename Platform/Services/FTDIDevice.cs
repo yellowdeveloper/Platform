@@ -163,7 +163,7 @@ namespace Platform.Services
             
         }
 
-        public void Send(SPIPacket packet, int _chunkSize)
+        public void Send(Packet packet, int _chunkSize)
         {
             int chunkSize = _chunkSize;
             int chunkSendCount = packet.DataLength / chunkSize;

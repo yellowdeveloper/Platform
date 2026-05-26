@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PluginBase.CommonUtils
 {
-    public class SPIPacket
+    public class Packet
     {
         public byte[] Data { get; set; }
         public int DataLength { get; set; }

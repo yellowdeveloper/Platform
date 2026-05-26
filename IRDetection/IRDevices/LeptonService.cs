@@ -75,8 +75,6 @@ namespace IRDetection.IRDevices
 
         public async Task CommunicateLepton3(CancellationToken cts)
         {
-            Console.WriteLine($"make_frame");
-
             SpiDevice spi = null;
 
             int discardCount = 0;
@@ -91,7 +89,7 @@ namespace IRDetection.IRDevices
 
                 if (ft232h == null)
                 {
-                    Console.WriteLine($"ft232 null :: reconnect");
+                    DebugLogger.Log(3, $"[DEBUG] ft232 null :: reconnect");
                     Connect();
                     if (ft232h != null)
                     {
@@ -103,6 +101,7 @@ namespace IRDetection.IRDevices
                     }
                     else
                     {
+                        FrameUpdate?.Invoke(null);
                         Thread.Sleep(500);
                     }
                     continue;
@@ -112,10 +111,9 @@ namespace IRDetection.IRDevices
                 if ((lepton_packet[0] & 0x0F) == 0x0F)
                 {
                     discardCount++;
-                    //Console.WriteLine($"Packet DISCARD PACKET");
                     if (discardCount > 300)
                     {
-                        Console.WriteLine("Reset Camera...");
+                        DebugLogger.Log(3, $"[DEBUG] Reset Camera...");
                         Disconnect();
                         Thread.Sleep(190);
                     }
@@ -124,7 +122,7 @@ namespace IRDetection.IRDevices
 
                 if (lepton_packet[1] != 0)
                 {
-                    Console.WriteLine($"Packet Index Error: {lepton_packet[1]}");
+                    DebugLogger.Log(1, $"[ERROR] Packet Index Error: {lepton_packet[1]}");
                     continue;
                 }
 
@@ -142,7 +140,7 @@ namespace IRDetection.IRDevices
                     invalidSegmentCount++;
                     if (invalidSegmentCount > 10)
                     {
-                        Console.WriteLine("Reset Camera...");
+                        DebugLogger.Log(3, $"[DEBUG] Reset Camera...");
                         Disconnect();
                         Thread.Sleep(190);
                     }
@@ -176,7 +174,7 @@ namespace IRDetection.IRDevices
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Exception Occurred while reading packet :: {ex}");
+                DebugLogger.Log(1, $"[ERROR] Exception Occurred while reading packet :: {ex}");
                 return;
             }
         }
@@ -189,7 +187,7 @@ namespace IRDetection.IRDevices
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Exception Occurred while reading packet :: {ex}");
+                DebugLogger.Log(1, $"[ERROR] Exception Occurred while reading packet :: {ex}");
                 return;
             }
         }
@@ -205,7 +203,7 @@ namespace IRDetection.IRDevices
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Exception Occurred while disconnecting :: {ex}");
+                    DebugLogger.Log(1, $"[ERROR] Exception Occurred while disconnecting :: {ex}");
                 }
             }
         }
@@ -236,7 +234,7 @@ namespace IRDetection.IRDevices
 
         ~LeptonService()
         {
-            Console.WriteLine($"[DEBUG] Disposing LeptonService Instance");
+            DebugLogger.Log(3, $"[DEBUG] Disposing LeptonService Instance");
         }
     }
 }

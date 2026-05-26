@@ -47,6 +47,7 @@ public interface ISerialDevice
     void SetDeviceHandler(ISerialDeviceHandler _serialHandler);
     void AttachSerialEventHandler();
     void DetachSerialEventHandler();
+    void Send(Packet packet, int _chunkSize);
 }
 
 public interface ISerialService
@@ -60,7 +61,7 @@ public interface ISPIDevice
     void SetDeviceHandler(ISPIDeviceHandler _serialHandler);
     void AttachSPIEventHandler();
     void DetachSPIEventHandler();
-    void Send(SPIPacket packet, int _chunkSize);
+    void Send(Packet packet, int _chunkSize);
 
 }
 

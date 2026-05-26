@@ -116,5 +116,10 @@ namespace Platform.Services
                 DebugLogger.Log(1, $"[ERROR] Error Occurred while receiving bytes from serial. {ex}");
             }
         }
+
+        public void Send(Packet packet, int _chunkSize)
+        {
+            sp.Write(packet.Data, 0, _chunkSize);
+        }
     }
 }

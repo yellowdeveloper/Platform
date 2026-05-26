@@ -1,11 +1,7 @@
 ﻿using PluginBase;
-using System.Windows.Input;
-using System.Diagnostics;
 using PluginBase.CommonUtils;
-using System.Runtime.InteropServices;
-using OpenCvSharp;
 
-namespace IRDetection;
+namespace ObjectDetection;
 
 public enum ESendStatus
 {
@@ -13,21 +9,15 @@ public enum ESendStatus
     Idle,
     Sending,
     WaitingForResponse
-} 
+}
 
-public class IRPlugin : IPlugin
+public class ObjectDetection : IPlugin
 {
-    public string PluginName => "Infrared Detection";
+    public string PluginName => "Object Detection";
 
     private IUI uiInterface;
     private IISerialDeviceHandler serialInterface;
     private IISPIDeviceHandler spiInterface;
-
-    // public ISerial GetSerialPlugins(ISerialService service)
-    // {
-    //     _serialInterface = new Serial(service);
-    //     return _serialInterface;
-    // }
 
     public IUI GetUIPlugins(ISerialService serialService, ISPIService spiService)
     {
@@ -36,7 +26,7 @@ public class IRPlugin : IPlugin
         serialInterface = new SerialDeviceHandler(serialService, settings);
         spiInterface = new SPIDeviceHandler(spiService, settings);
         uiInterface = new UI(serialInterface, spiInterface, settings);
-        
+
         return uiInterface;
     }
 }
@@ -49,7 +39,7 @@ public class UI : IUI
     private readonly Settings settings;
     public event EventHandler CloseRequested;
 
-    public UI(IISerialDeviceHandler _serialDeviceHandler, IISPIDeviceHandler _spiDeviceHandler,  Settings _settings)
+    public UI(IISerialDeviceHandler _serialDeviceHandler, IISPIDeviceHandler _spiDeviceHandler, Settings _settings)
     {
         serialDeviceHandler = _serialDeviceHandler;
         spiDeviceHandler = _spiDeviceHandler;
@@ -74,6 +64,6 @@ public class UI : IUI
 
     ~UI()
     {
-        DebugLogger.Log(3, $"[DEBUG] Disposing IRDetection UI Instance");
+        DebugLogger.Log(3, $"[DEBUG] Disposing ObjectDetection UI Instance");
     }
 }

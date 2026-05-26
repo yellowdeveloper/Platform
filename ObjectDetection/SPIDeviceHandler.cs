@@ -2,22 +2,19 @@
 using PluginBase;
 using PluginBase.CommonUtils;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Device.Spi;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Forms.Design;
 
-namespace IRDetection
+namespace ObjectDetection
 {
-    public interface IISPIDeviceHandler : ISPIDeviceHandler
+    public interface IISPIDeviceHandler: ISPIDeviceHandler
     {
         int[] GetSPIDeviceList();
         Task SendImage(Mat imageData);
     }
-    public class SPIDeviceHandler : IISPIDeviceHandler
+    public class SPIDeviceHandler: IISPIDeviceHandler
     {
         private ISPIDevice spiDevice;
         private ISPIService spiService;

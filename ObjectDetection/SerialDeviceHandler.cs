@@ -1,32 +1,22 @@
 ﻿using PluginBase;
 using PluginBase.CommonUtils;
-using FTD2XX_NET;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows;
 
-namespace IRDetection
+namespace ObjectDetection
 {
-    public interface IISerialDeviceHandler : ISerialDeviceHandler
+    public interface IISerialDeviceHandler: ISerialDeviceHandler
     {
         public event Action<float, float, List<OpenCvSharp.Rect>, List<int>, List<int>> PointsReceived;
         public int[] GetSerialDeviceList();
         public void SendModuleAlarm();
         public void Dispose();
     }
-    // 시리얼 인터페이스는 외부에 노출하지 않음.
-    // 내부적으로 모든 기능을 실행.
-    // 모듈마다 헤더 / 푸터 / 데이터 길이 등을 다르게 설정할 수 있는 가능성을 열어두기 위함.
-    // 기본적인 로직 자체는 그래도 써도 무방.
-
-    /// <summary>
-    /// 시리얼 수신 버퍼 처리 담당 인터페이스
-    /// </summary>
-    public class SerialDeviceHandler : IISerialDeviceHandler
+    public class SerialDeviceHandler: IISerialDeviceHandler
     {
         private ISerialDevice serialDevice;
         private ISerialService serialService;
@@ -80,7 +70,7 @@ namespace IRDetection
         public void SerialDisconnect()
         {
             if (serialDevice == null) return;
-            DebugLogger.Log(3, $"[DEBUG] Disconnect with serial device in IR Detection");
+            DebugLogger.Log(3, $"[DEBUG] Disconnect with serial device in Object Detection");
 
 
             serialDevice.SetDeviceHandler(null);
@@ -155,9 +145,9 @@ namespace IRDetection
 
             int modelType = validData[validData.Count - 9];
 
-            if (modelType != 1)
+            if (modelType != 0)
             {
-                DebugLogger.Log(2, $"[WARN] ModelTypeError!! receivedType :: {modelType}, currentType :: 1");
+                DebugLogger.Log(2, $"[WARN] ModelTypeError!! receivedType :: {modelType}, currentType :: 0");
                 Thread.Sleep(10);
                 return;
             }
@@ -196,19 +186,11 @@ namespace IRDetection
 
                 if (settings.sendMod == 0)
                 {
-                    y_new -= 20;
+                    y_new -= 40;
                 }
 
-                if (settings.deviceID == 1)
-                {
-                    ratio_x = 640.0f / 160; // Lepton Device Width = 160
-                    ratio_y = 480.0f / 120; // Lepton Device Height = 120
-                }
-                else
-                {
-                    ratio_x = 512.0f / settings.resolution_x;
-                    ratio_y = 512.0f / settings.resolution_y;
-                }
+                ratio_x = 640.0f / 320;
+                ratio_y = 480.0f / 320;
 
                 x_new = (int)(x_new * ratio_x);
                 y_new = (int)(y_new * ratio_y);
@@ -255,7 +237,7 @@ namespace IRDetection
         {
             Packet moduleAlarm = new Packet();
 
-            moduleAlarm.Data = new byte[] { 0x01, 0x0D, 0x0A };
+            moduleAlarm.Data = new byte[] { 0x00, 0x0D, 0x0A };
             moduleAlarm.DataLength = 3;
 
             serialDevice.Send(moduleAlarm, moduleAlarm.DataLength);
@@ -276,7 +258,7 @@ namespace IRDetection
 
         ~SerialDeviceHandler()
         {
-            DebugLogger.Log(3, $"[DEBUG] Disposing IRDetection Serial Interface");
+            DebugLogger.Log(3, $"[DEBUG] Disposing Object Detection Serial Interface");
         }
     }
 }
