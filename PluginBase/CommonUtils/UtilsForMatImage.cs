@@ -66,5 +66,36 @@ namespace PluginBase.CommonUtils
             } while (is_intersect);
             return text_box;
         }
+
+        public static bool CheckIfRegionWhite(Mat frame, Rect region)
+        {
+            using (Mat refRect = frame[region])
+            {
+                Scalar meanColor = Cv2.Mean(refRect);
+
+                double meanB = meanColor.Val0;
+                double meanG = meanColor.Val1;
+                double meanR = meanColor.Val2;
+
+                DebugLogger.Log(3, $"[DEBUG] RefBox Mean Color - B:{meanB:F1}, G:{meanG:F1}, R:{meanR:F1}");
+
+                double maxColor = Math.Max(meanR, Math.Max(meanG, meanB));
+                double minColor = Math.Min(meanR, Math.Min(meanG, meanB));
+
+                if (meanB < 110 || meanG < 110 || meanR < 110)
+                {
+                    DebugLogger.Log(3, $"[ERROR] ERROR!! REF REGION IS TOO DARK!");
+                    return false;
+                }
+
+                if (maxColor - minColor > 35)
+                {
+                    DebugLogger.Log(3, $"[ERROR] ERROR!! REF REGION IS NOT WHITE!!");
+                    return false;
+                }
+
+                return true;
+            }
+        }
     }
 }

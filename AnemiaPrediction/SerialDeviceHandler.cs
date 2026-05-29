@@ -1,32 +1,25 @@
-﻿using PluginBase;
+﻿using OpenCvSharp;
+using PluginBase;
 using PluginBase.CommonUtils;
-using FTD2XX_NET;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows;
 
-namespace IRDetection
+namespace AnemiaPrediction
 {
     public interface IISerialDeviceHandler : ISerialDeviceHandler
     {
-        public event Action<float, float, List<OpenCvSharp.Rect>, List<int>, List<int>> PointsReceived;
+        public event Action<float, float, float, byte, List<OpenCvSharp.Rect>> PointsReceived;
         public int[] GetSerialDeviceList();
         public void SendModuleAlarm();
         public void Dispose();
     }
-    // 시리얼 인터페이스는 외부에 노출하지 않음.
-    // 내부적으로 모든 기능을 실행.
-    // 모듈마다 헤더 / 푸터 / 데이터 길이 등을 다르게 설정할 수 있는 가능성을 열어두기 위함.
-    // 기본적인 로직 자체는 그래도 써도 무방.
 
-    /// <summary>
-    /// 시리얼 수신 버퍼 처리 담당 인터페이스
-    /// </summary>
-    public class SerialDeviceHandler : IISerialDeviceHandler
+    internal class SerialDeviceHandler: IISerialDeviceHandler
     {
         private ISerialDevice serialDevice;
         private ISerialService serialService;
@@ -38,7 +31,7 @@ namespace IRDetection
 
         private int footerTryCnt = 0;
 
-        public event Action<float, float, List<OpenCvSharp.Rect>, List<int>, List<int>> PointsReceived;
+        public event Action<float, float, float, byte, List<OpenCvSharp.Rect>> PointsReceived;
 
         /// <summary>
         /// Serial 클래스 생성자.
@@ -60,7 +53,7 @@ namespace IRDetection
         /// <summary>
         /// 데이터 유효성을 확인하기 위함. 
         /// </summary>
-        public int checkValidDataLength = 10;
+        public int checkValidDataLength = 12;
 
         public void SerialConnect(int id)
         {
@@ -80,7 +73,7 @@ namespace IRDetection
         public void SerialDisconnect()
         {
             if (serialDevice == null) return;
-            DebugLogger.Log(3, $"[DEBUG] Disconnect with serial device in IR Detection");
+            DebugLogger.Log(3, $"[DEBUG] Disconnect with serial device in Object Detection");
 
 
             serialDevice.SetDeviceHandler(null);
@@ -151,6 +144,15 @@ namespace IRDetection
 
             float power = 0.0f;
             float ampere = 0.0f;
+            float prob = 0.0f;
+            byte errorCode = 0;
+
+            if (validData.Count < 12 && validData[0] == 0xFF)
+            {
+                errorCode = validData[1];
+                PointsReceived.Invoke(0.0f, 0.0f, 0.0f, errorCode, null);
+                return;
+            }
 
             int detectedCount = validData[0];
 
@@ -158,30 +160,40 @@ namespace IRDetection
 
             int modelType = validData[validData.Count - 9];
 
-            if (modelType != 1)
+            if (modelType != 2)
             {
-                DebugLogger.Log(2, $"[WARN] ModelTypeError!! receivedType :: {modelType}, currentType :: 1");
+                DebugLogger.Log(2, $"[WARN] ModelTypeError!! receivedType :: {modelType}, currentType :: 2");
                 Thread.Sleep(10);
                 return;
             }
 
             ParseConsumption(validData.Count, out power, out ampere);
-            ParseDetectionResult(detectedCount, receivedRects, receivedCls, receivedProbs);
+            ParseDetectionResult(detectedCount, receivedRects, out prob);
 
-            PointsReceived?.Invoke(ampere, power, receivedRects, receivedCls, receivedProbs);
+            PointsReceived?.Invoke(ampere, power, prob, errorCode, receivedRects);
         }
 
-        private void ParseDetectionResult(int detectedCount, List<OpenCvSharp.Rect> receivedRects, List<int> receivedCls, List<int> receivedProbs)
+        private void ParseDetectionResult(int detectedCount, List<OpenCvSharp.Rect> receivedRects, out float prob)
         {
             DebugLogger.Log(3, $"[DEBUG] *Function In* ParseDetectionResult entered");
 
+            byte[] probByte = new byte[4];
+            probByte[0] = validData[validData.Count - 4];
+            probByte[1] = validData[validData.Count - 3];
+            probByte[2] = validData[validData.Count - 2];
+            probByte[3] = validData[validData.Count - 1];
+
+            float probVal = BitConverter.ToUInt32(probByte);
+            prob = probVal / 1000.0f;
+
+            validData.RemoveRange(validData.Count - 4, 4);
+
             for (int i = 0; i < detectedCount; i++)
             {
-                byte[] rectData = validData.Take(10).ToArray();
-                validData.RemoveRange(0, 10);
+                byte[] rectData = validData.Take(9).ToArray();
+                validData.RemoveRange(0, 9);
 
-                int cls = rectData[0];
-                int prob = rectData[1];
+                int nailProb = rectData[1];
                 int x = BitConverter.ToInt16(rectData, 2); // lt x
                 int y = BitConverter.ToInt16(rectData, 4); // lt y
                 int w = BitConverter.ToInt16(rectData, 6);
@@ -199,32 +211,22 @@ namespace IRDetection
 
                 if (settings.sendMod == 0)
                 {
-                    y_new -= 20;
+                    y_new -= 40;
                 }
 
-                if (settings.deviceID == 1)
-                {
-                    ratio_x = 640.0f / 160; // Lepton Device Width = 160
-                    ratio_y = 480.0f / 120; // Lepton Device Height = 120
-                }
-                else
-                {
-                    ratio_x = 512.0f / settings.resolution_x;
-                    ratio_y = 512.0f / settings.resolution_y;
-                }
+                ratio_x = 640.0f / 320;
+                ratio_y = 640.0f / 320;
 
                 x_new = (int)(x_new * ratio_x);
                 y_new = (int)(y_new * ratio_y);
                 w_new = (int)(w_new * ratio_x);
                 h_new = (int)(h_new * ratio_y);
 
-                DebugLogger.Log(3, $"[DEBUG] Num {i + 1} | class {cls} | probability {prob} :: x={x}, y={y}, w={w}, h={h}");
+                DebugLogger.Log(3, $"[DEBUG] Num {i + 1} | probability {nailProb} :: x={x}, y={y}, w={w}, h={h}");
 
-                if (prob >= settings.probThres && (cls == 0 || cls == 1))
+                if (nailProb >= settings.probThres)
                 {
-                    receivedCls.Add(cls);
-                    receivedProbs.Add(prob);
-                    receivedRects.Add(new OpenCvSharp.Rect(x_new, y_new, w_new, h_new));
+                    receivedRects.Add(new Rect(x_new, y_new, w_new, h_new));
                 }
             }
         }
@@ -258,7 +260,7 @@ namespace IRDetection
         {
             Packet moduleAlarm = new Packet();
 
-            moduleAlarm.Data = new byte[] { 0x01, 0x0D, 0x0A };
+            moduleAlarm.Data = new byte[] { 0x02, 0x0D, 0x0A };
             moduleAlarm.DataLength = 3;
 
             serialDevice.Send(moduleAlarm, moduleAlarm.DataLength);
@@ -279,7 +281,7 @@ namespace IRDetection
 
         ~SerialDeviceHandler()
         {
-            DebugLogger.Log(3, $"[DEBUG] Disposing IRDetection Serial Interface");
+            DebugLogger.Log(3, $"[DEBUG] Disposing Anemia Prediction Serial Interface");
         }
     }
 }

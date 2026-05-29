@@ -6,16 +6,369 @@
              xmlns:commonUtil="clr-namespace:PluginBase.CommonUtils;assembly=PluginBase"
              mc:Ignorable="d" 
              d:DesignHeight="670" d:DesignWidth="1260">
-    <Border Background="#ffbcbc" CornerRadius="0,0,0,0" Opacity="1" BorderBrush="#757575" BorderThickness="1">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/PluginBase;component/UITemplates/DefaultStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <Border Background="#FFFFFF" CornerRadius="5" Opacity="1" BorderBrush="LightGray"
+            BorderThickness="1">
         <Grid AllowDrop="True">
-            <commonUtil:RoundButton  VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,0,10,0"
-                       FontSize="15" Foreground="#000000">
-                <TextBlock Text="X"/>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="7*"/>
+                <RowDefinition Height="2*"/>
+            </Grid.RowDefinitions>
+            <Grid x:Name="HeadLine" Grid.Row="0" Margin="10,0,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="11*"/>
+                    <ColumnDefinition Width="3.5*"/>
+                    <ColumnDefinition Width="2.5*"/>
+                </Grid.ColumnDefinitions>
+
+                <Image x:Name="LogoImage" Grid.Column="0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
+                       Source="pack://application:,,,/AnemiaPrediction;component/Resources/NailLogo.png" Margin="5,5,5,10"/>
+                <TextBlock Grid.Column="1" FontSize="45" Margin="0,5,0,0"
+                           VerticalAlignment="Center" HorizontalAlignment="Left"
+                           FontFamily="Bahnschrift SemiBold Condensed">
+                    <Run Text="DOKSAN-NPU"/>
+                    <Run Text="ANEMIA" Foreground="Red"/>
+                    <Run Text="PREDICTION WITH NAIL"/>
+                </TextBlock>
+                <Grid Grid.Column="2">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0" Text="SoftWare Version 1.0.0"  Foreground="#FF969696"
+                               VerticalAlignment="Bottom" HorizontalAlignment="Left"
+                               Margin="0,0,0,2.5" FontFamily="Bahnschrift Light"/>
+                    <TextBlock Grid.Row="1" Text="Copyright (c) 2026. Pachelbel Inc."  Foreground="#FF969696"
+                               VerticalAlignment="Top" HorizontalAlignment="Left"
+                               Margin="0,0,0,2.5" FontFamily="Bahnschrift Light"/>
+                </Grid>
+                <commonUtil:RoundButton Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Left"
+                    Margin="0,5,30,0" FontSize="20" Foreground="#000000" BorderBrush="Black"
+                    Click="SettingsButton_Click" CornerRadius="5" BorderThickness="2"
+                    FontFamily="Bahnschrift SemiBold SemiCondensed">
+                    <TextBlock Text="Settings" Margin="10,5,10,5"/>
+                </commonUtil:RoundButton>
+            </Grid>
+
+            <Border x:Name="ImagePanels" Grid.Row="1" Margin="5,0,5,2.5" BorderBrush="LightGray"
+                    BorderThickness="1" CornerRadius="5">
+                <Grid >
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Border Grid.Column="0" Margin="5,5,2.5,5" Background="Black">
+                        <Image Source="{Binding bitmapShow}" Stretch="Uniform"/>
+                    </Border>
+                    <Border Grid.Column="1" Margin="5,5,2.5,5" Background="Black">
+                        <Image Source="{Binding bitmapProcessed}" Stretch="Uniform"/>
+                    </Border>
+                </Grid>
+            </Border>
+
+            <Border Grid.Row="1" x:Name="SettingsPanel" Visibility="Collapsed"
+                    VerticalAlignment="Center" HorizontalAlignment="Center"
+                    Margin="10" Width="400" Height="300" CornerRadius="5"
+                    Background="Transparent" BorderBrush="White" BorderThickness="2">
+                <Grid>
+                    <Border Background="LightGray" Opacity="0.7" CornerRadius="5"/>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="8*"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0" Grid.Column="1" Text="SETTINGS" Foreground="Red"
+                                   TextAlignment="Center" VerticalAlignment="Center" Margin="0,5"
+                                   FontFamily="Bahnschrift SemiBold SemiCondensed" FontSize="16"/>
+                        <Border Grid.Row="1" Margin="5,0" BorderBrush="White" BorderThickness="0,1,0,0">
+                            <Grid Margin="10,10" HorizontalAlignment="Center">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Border Grid.Column="0" BorderBrush="White" BorderThickness="0,0,0.5,0" Margin="0,0,15,0">
+                                    <UniformGrid Rows="10" Margin="0,0,15,0">
+                                        <TextBlock Text="Sensor Settings" VerticalAlignment="Center" HorizontalAlignment="Left"
+                                                   FontFamily="Bahnschrift SemiBold SemiCondensed" FontSize="14"/>
+                                        <TextBlock Text="Device ID" FontFamily="Bahnschrift" VerticalAlignment="Bottom"/>
+                                        <TextBlock Text="Camera" FontFamily="Bahnschrift" VerticalAlignment="Top"
+                                                   Background="White" Margin="0,0,15,0" Foreground="DimGray"/>
+                                        <TextBlock Text="Device Port ID" FontFamily="Bahnschrift" VerticalAlignment="Bottom"/>
+                                        <TextBlock Text="-" FontFamily="Bahnschrift" VerticalAlignment="Top"
+                                                   Background="White" Margin="0,0,15,0" Foreground="DimGray"/>
+                                    </UniformGrid>
+                                </Border>
+                                <Border Grid.Column="1" BorderBrush="White" BorderThickness="0,0,0.5,0">
+                                    <UniformGrid Rows="10" Margin="0,0,15,0">
+                                        <TextBlock Text="NPU Board Settings" VerticalAlignment="Center" HorizontalAlignment="Left"
+                                                   FontFamily="Bahnschrift SemiBold SemiCondensed" FontSize="14"/>
+                                        <TextBlock Text="Serial Port ID" FontFamily="Bahnschrift" VerticalAlignment="Bottom"/>
+                                        <ComboBox Grid.Column="1" Margin="0,0,30,0"  ItemsSource="{Binding serialDevices}" VerticalAlignment="Top"
+                                                  SelectedItem="{Binding settings.serialPortID, UpdateSourceTrigger=LostFocus, Mode=TwoWay}"
+                                                  HorizontalContentAlignment="Stretch" FontFamily="Bahnschrift Light" />
+                                        <TextBlock Text="SPI Port ID" FontFamily="Bahnschrift" VerticalAlignment="Bottom"/>
+                                        <ComboBox Grid.Column="1" Margin="0,0,30,0"  ItemsSource="{Binding spiDevices}" VerticalAlignment="Top"
+                                                  SelectedItem="{Binding settings.spiPortID, UpdateSourceTrigger=LostFocus, Mode=TwoWay}"
+                                                  HorizontalContentAlignment="Stretch" FontFamily="Bahnschrift Light" />
+                                    </UniformGrid>
+                                </Border>
+                                <UniformGrid Grid.Column="2" Rows="10" Margin="15,0,0,0">
+                                    <TextBlock Text="User Settings" VerticalAlignment="Center" HorizontalAlignment="Left"
+                                               FontFamily="Bahnschrift SemiBold SemiCondensed" FontSize="14"/>
+                                    <TextBlock Text="Prob Thres" FontFamily="Bahnschrift" VerticalAlignment="Bottom"/>
+                                    <TextBox Text="{Binding settings.probThres, UpdateSourceTrigger=LostFocus, Mode=TwoWay}"
+                                             TextAlignment="Left" Margin="0,0,0,0" FontFamily="Bahnschrift Light"
+                                             VerticalAlignment="Top" HorizontalAlignment="Stretch"
+                                             BorderBrush="Transparent" BorderThickness="0"/>
+                                </UniformGrid>
+                            </Grid>
+                        </Border>
+                    </Grid>
+                </Grid>
+            </Border>
+
+            <Grid x:Name="BottomPanels" Grid.Row="2" Margin="5,2.5,5,5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="0.7*"/>
+                    <ColumnDefinition Width="1.3*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Border x:Name="DeviceConnectionPanel" Grid.Column="0" BorderBrush="LightGray"
+                        BorderThickness="1" CornerRadius="5" Margin="0,0,2.5,0">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Border BorderBrush="#FFABABAB" BorderThickness="0,0,0,1" Margin="20,0,20,0">
+                            <TextBlock Grid.Row="0" Text="Device Connection" FontSize="20"
+                                       FontWeight="Bold" Margin="0,5,0,5"
+                                       HorizontalAlignment="Center" VerticalAlignment="Top" FontFamily="Bahnschrift SemiBold SemiCondensed"/>
+                        </Border>
+                        <Grid Grid.Row="1" Margin="10, 5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1.2*"/>
+                                <ColumnDefinition Width="0.6*"/>
+                                <ColumnDefinition Width="1.2*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid Grid.Column="0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="3*"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <Image x:Name="CameraImage" Grid.Row="0" HorizontalAlignment="Left" Margin="15,5"
+                                       Source="pack://application:,,,/AnemiaPrediction;component/Resources/Camera.png"/>
+                                <commonUtil:RoundButton Grid.Row="1" VerticalAlignment="Top" HorizontalAlignment="Left"
+                                        Foreground="#000000" BorderBrush="Black" Margin="19,0"
+                                        Command="{Binding CameraConnectCommand}" CornerRadius="5" BorderThickness="2"
+                                        FontFamily="Bahnschrift SemiBold SemiCondensed">
+                                    <TextBlock Text="Connect" Margin="5, 2.5"/>
+                                </commonUtil:RoundButton>
+                            </Grid>
+                            <Line X1="0" Y1="0" X2="1" Y2="0" Stroke="Red" StrokeThickness="5"
+                                  Stretch="Fill" StrokeDashArray="1,1" Grid.Column="0" Margin="70,0,0,20">
+                                <Line.Triggers>
+                                    <EventTrigger RoutedEvent="Loaded">
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <DoubleAnimation 
+                                                    Storyboard.TargetProperty="StrokeDashOffset" 
+                                                    From="6" To="0" 
+                                                    Duration="0:0:2" 
+                                                    RepeatBehavior="Forever"/>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </EventTrigger>
+                                </Line.Triggers>
+                            </Line>
+
+                            <Grid Grid.Column="1">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="3*"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <Image x:Name="UserImage" Grid.Row="0" Margin="3"
+                                       Source="pack://application:,,,/AnemiaPrediction;component/Resources/User.png"/>
+                                <TextBlock Grid.Row="1" Text="User"
+                                           VerticalAlignment="Top" HorizontalAlignment="Center"
+                                           FontFamily="Bahnschrift SemiBold SemiCondensed"
+                                           FontSize="15" Foreground="Black"/>
+                            </Grid>
+
+                            <Grid Grid.Column="2">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="3*"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <Image x:Name="PCBImage" Grid.Row="0" Margin="18,3" HorizontalAlignment="Right"
+                                       Source="pack://application:,,,/AnemiaPrediction;component/Resources/PCB.png"/>
+                                <commonUtil:RoundButton Grid.Row="1" VerticalAlignment="Top" HorizontalAlignment="Right"
+                                        Foreground="#000000" BorderBrush="Black" Margin="0,0,19,0"
+                                        Command="{Binding NPUConnectCommand}" CornerRadius="5" BorderThickness="2"
+                                        FontFamily="Bahnschrift SemiBold SemiCondensed">
+                                    <TextBlock Text="Connect" Margin="5, 2.5"/>
+                                </commonUtil:RoundButton>
+                            </Grid>
+                            <Line X1="0" Y1="0" X2="1" Y2="0" Stroke="Red" StrokeThickness="5"
+                                  Stretch="Fill" StrokeDashArray="1,1" Grid.Column="2" Margin="0,0,70,40">
+                                <Line.Triggers>
+                                    <EventTrigger RoutedEvent="Loaded">
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <DoubleAnimation 
+                                                    Storyboard.TargetProperty="StrokeDashOffset" 
+                                                    From="6" To="0" 
+                                                    Duration="0:0:2" 
+                                                    RepeatBehavior="Forever"/>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </EventTrigger>
+                                </Line.Triggers>
+                            </Line>
+
+                            <Line X1="0" Y1="0" X2="1" Y2="0" Stroke="Red" StrokeThickness="5"
+                                  Stretch="Fill" StrokeDashArray="1,1" Grid.Column="2" Margin="0,0,70,00">
+                                <Line.Triggers>
+                                    <EventTrigger RoutedEvent="Loaded">
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <DoubleAnimation 
+                                                    Storyboard.TargetProperty="StrokeDashOffset" 
+                                                    From="0" To="6" 
+                                                    Duration="0:0:2" 
+                                                    RepeatBehavior="Forever"/>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </EventTrigger>
+                                </Line.Triggers>
+                            </Line>
+                        </Grid>
+                    </Grid>
+                </Border>
+                <Border x:Name="HWSpecPanel" Grid.Column="1" BorderBrush="LightGray" BorderThickness="1" CornerRadius="5" Margin="2.5,0,2.5,0">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Border BorderBrush="#FFABABAB" BorderThickness="0,0,0,1" Margin="20,0,20,0">
+                            <TextBlock Grid.Row="0" FontSize="20"
+                                       FontWeight="Bold" Margin="0,5,0,5"
+                                       HorizontalAlignment="Center" VerticalAlignment="Top" FontFamily="Bahnschrift SemiBold SemiCondensed">
+                <Run Text="HardWare"/>
+                <Run Text="SPEC" Foreground="Red"/>
+                            </TextBlock>
+                        </Border>
+                        <Grid Grid.Row="1" Margin="25,5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="0.65*"/>
+                                <ColumnDefinition Width="1.65*"/>
+                                <ColumnDefinition Width="0.7*"/>
+                            </Grid.ColumnDefinitions>
+                            <UniformGrid Grid.Column="0" Rows="3">
+                                <Border Background="Black" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5, 2.5">
+                                    <TextBlock Text="CORE" FontFamily="Bahnschrift SemiBold" FontSize="15"
+                                               Foreground="White" TextAlignment="Center" VerticalAlignment="Center" Margin="0,2,0,0"/>
+                                </Border>
+                                <Border Background="Black" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5, 2.5">
+                                    <TextBlock Text="NPU" FontFamily="Bahnschrift SemiBold" FontSize="15"
+                                               Foreground="White" TextAlignment="Center" VerticalAlignment="Center" Margin="0,2,0,0"/>
+                                </Border>
+                                <Border Background="Black" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5, 2.5">
+                                    <TextBlock Text="MEMORY" FontFamily="Bahnschrift SemiBold" FontSize="15"
+                                               Foreground="White" TextAlignment="Center" VerticalAlignment="Center" Margin="0,2,0,0"/>
+                                </Border>
+                            </UniformGrid>
+                            <UniformGrid Grid.Column="1" Rows="3">
+                                <TextBlock Text="ARM Cortex-M55 (360Mhz)" Margin="5" FontFamily="Bahnschrift SemiBold" FontSize="15"/>
+                                <TextBlock Text="256MACs (480Mhz)  0.24TOPS" Margin="5" FontFamily="Bahnschrift SemiBold" FontSize="15"/>
+                                <TextBlock Text="SRAM 6MB" Margin="5" FontFamily="Bahnschrift SemiBold" FontSize="15"/>
+                            </UniformGrid>
+                            <Image Grid.Column="2" x:Name="DoksanNPUImage" Source="pack://application:,,,/AnemiaPrediction;component/Resources/DoksanNPU.png"/>
+                        </Grid>
+                    </Grid>
+                </Border>
+                <Border x:Name="Current" Grid.Column="2" BorderBrush="LightGray" BorderThickness="1" CornerRadius="5" Margin="2.5,0,0,0">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Border BorderBrush="#FFABABAB" BorderThickness="0,0,0,1" Margin="20,0,20,0">
+                            <TextBlock Grid.Row="0" Text="Real-Time Information " FontSize="20"
+                                       FontWeight="Bold" Margin="0,5,0,5"
+                                       HorizontalAlignment="Center" VerticalAlignment="Top" FontFamily="Bahnschrift SemiBold SemiCondensed"/>
+                        </Border>
+                        <Grid Grid.Row="1" Margin="25,5">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="3*"/>
+                                </Grid.ColumnDefinitions>
+                                <commonUtil:RoundButton Grid.Column="0" Margin="5" CornerRadius="5"
+                                                        BorderThickness="2" Foreground="#000000"
+                                                        BorderBrush="Black" FontSize="20">
+                                    <TextBlock Text="Start"
+                                               FontFamily="Bahnschrift Condensed"/>
+                                </commonUtil:RoundButton>
+                                <Border Grid.Column="1" BorderThickness="2,0,0,0" BorderBrush="Black"
+                                        Margin="5,2,0,2">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="*"/>
+                                        </Grid.RowDefinitions>
+                                        <TextBlock Grid.Row="0" Text="{Binding topMessageLeft}" FontSize="15" FontFamily="Noto Sans KR Black" VerticalAlignment="Center"/>
+                                        <TextBlock Grid.Row="1" Text="{Binding topMessageRight}" FontSize="15"/>
+                                    </Grid>
+                                </Border>
+                            </Grid>
+
+                            <UniformGrid Grid.Row="2" Columns="2" Rows="2">
+                                <Border Background="Black" Margin="0, 2.5, 5, 2.5"
+                                        HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                    <TextBlock Text="POWER" FontFamily="Bahnschrift SemiBold" FontSize="15"
+                                               Foreground="White" TextAlignment="Center" VerticalAlignment="Center" Margin="0,2,0,0"/>
+                                </Border>
+                                <Border Background="Black"  Margin="5, 2.5, 0, 2.5"
+                                        HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                    <TextBlock Text="AMPERE" FontFamily="Bahnschrift SemiBold" FontSize="15"
+                                               Foreground="White" TextAlignment="Center" VerticalAlignment="Center" Margin="0,2,0,0"/>
+                                </Border>
+                                <TextBlock Grid.Column="0" Text = "{Binding pow, StringFormat={}{0:F3} W}"
+                                           Foreground="Red" Margin="0,0,0,0" FontSize="15"
+                                           FontFamily="Bahnschrift SemiBold" HorizontalAlignment="Center"/>
+                                <TextBlock Grid.Column="1" Text = "{Binding amp, StringFormat={}{0:F3} mA}"
+                                           Foreground="Red" Margin="0,0,0,0" FontSize="15"
+                                           FontFamily="Bahnschrift SemiBold" HorizontalAlignment="Center"/>
+                            </UniformGrid>
+
+                        </Grid>
+                    </Grid>
+                </Border>
+            </Grid>
+
+            <commonUtil:RoundButton  VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,5,5,0"
+                                     FontSize="15" Foreground="DimGray" Click="CloseButton_Click"
+                                     CornerRadius="2.5">
+                <TextBlock Text="X"  Margin="5,0,5,2.5" FontWeight="Bold"/>
             </commonUtil:RoundButton>
-            <Button Content="Connect No.1" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,0,0,0"
-                       FontSize="15" Foreground="#000000" Command="{Binding ConnectCommand}"/>
-            <TextBlock Text="Hello From AnemiaPrediction" VerticalAlignment="Center" HorizontalAlignment="Center"
-                       TextAlignment="Center" FontSize="40" Foreground="#000000"/>
         </Grid>
     </Border>
 </UserControl>

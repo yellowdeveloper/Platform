@@ -23,7 +23,7 @@ namespace PluginBase.CommonUtils
             
             if (_debugLV > 0) AllocConsole();
 
-            Log(1, $"[DEBUG] Debug Level set to \"{level}\""
+            Log(3, $"[DEBUG] Debug Level set to \"{level}\""
                  + $"\n        0: No Debug Msg"
                  + $"\n        1: ERROR Only"
                  + $"\n        2: + WARNING"
@@ -33,7 +33,12 @@ namespace PluginBase.CommonUtils
         {
             if (level > _debugLV) return;
             
+            if (level == 1) Console.ForegroundColor = ConsoleColor.Red;
+            if (level == 2) Console.ForegroundColor = ConsoleColor.Yellow;
+
             Console.WriteLine(msg);
+
+            Console.ForegroundColor = ConsoleColor.White;
         }
 
         [DllImport("kernel32.dll")]

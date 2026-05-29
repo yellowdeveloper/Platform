@@ -5,102 +5,67 @@ using PluginBase.CommonUtils;
 
 namespace AnemiaPrediction;
 
-public class AnemiaPlugin : IPlugin
+public enum ESendStatus
 {
-    public string PluginName => "Anemia Prediction";
-
-    private IUI _uiInterface;
-    private ISerial _serialInterface;
-
-    // public ISerial GetSerialPlugins(ISerialService service)
-    // {
-    //     _serialInterface = new Serial(service);
-    //     return _serialInterface;
-    // }
-    
-    public IUI GetUIPlugins(ISerialService service)
-    {
-        _serialInterface = new Serial(service);
-        _uiInterface = new UI(_serialInterface);
-        return _uiInterface;
-    }
+    NotReady,
+    Idle,
+    Sending,
+    WaitingForResponse
 }
 
-public class Serial : ISerial
+public class IRPlugin : IPlugin
 {
-    private ISerialDevice device;
-    private ISerialService service;
+    public string PluginName => "Anemia Classification";
 
-    public Serial(ISerialService _service)
+    private IUI uiInterface;
+    private IISerialDeviceHandler serialInterface;
+    private IISPIDeviceHandler spiInterface;
+
+    public IUI GetUIPlugins(ISerialService serialService, ISPIService spiService)
     {
-        service = _service;
-    }
+        var settings = new Settings();
 
-    public byte[] header { get; } = new byte[] { 0x10, 0x01, 0x10, 0x01 };
-    public byte[] footer { get; } = new byte[] { 0x0D, 0x0A, 0x0D, 0x0A };
+        serialInterface = new SerialDeviceHandler(serialService, settings);
+        spiInterface = new SPIDeviceHandler(spiService, settings);
+        uiInterface = new UI(serialInterface, spiInterface, settings);
 
-    public void PluginConnect(int id)
-    {
-        device = service.GetDevice(id);
-        if (device == null)
-        {
-            DebugLogger.Log(1, $"[ERROR] Device doesn't exists.");
-            return;
-        }
-        DebugLogger.Log(3, $"[DEBUG] Device No.{id} Plugin Connection Operated ...");
-
-        device.SetDeviceHandler(this);
-        device.AttachSerialEventHandler();
-        
-    }
-
-    public void PluginDisconnect()
-    {
-        if (device == null) return;
-
-        device.SetDeviceHandler(null);
-        device.DetachSerialEventHandler();
-    }
-
-    public void ProcessReceivedBuffer (byte[] dataByte)
-    {
-        DebugLogger.Log(3, $"[DEBUG] HEDAER, FOOTER : 0x{header[0]:X2} 0x{header[1]:X2} | 0x{footer[0]:X2} 0x{footer[1]:X2}");
+        return uiInterface;
     }
 }
 
 public class UI : IUI
 {
-    private readonly ISerial serial;
+    private readonly IISerialDeviceHandler serialDeviceHandler;
+    private readonly IISPIDeviceHandler spiDeviceHandler;
 
-    public UI(ISerial _serial)
+    private readonly Settings settings;
+    public event EventHandler CloseRequested;
+
+    public UI(IISerialDeviceHandler _serialDeviceHandler, IISPIDeviceHandler _spiDeviceHandler, Settings _settings)
     {
-        serial = _serial;
+        serialDeviceHandler = _serialDeviceHandler;
+        spiDeviceHandler = _spiDeviceHandler;
+        settings = _settings;
     }
 
     public object GetPluginUI()
     {
         var view = new PluginUI();
-        var viewModel = new ViewModel(serial);
+        var viewModel = new ViewModel(serialDeviceHandler, spiDeviceHandler, settings);
 
         view.DataContext = viewModel;
 
+        view.CloseRequested += (sender, e) =>
+        {
+            viewModel?.Dispose();
+            this.CloseRequested?.Invoke(this, EventArgs.Empty);
+        };
+
         return view;
     }
-}
 
-internal class ViewModel
-{
-    private readonly ISerial serial;
-
-    public ICommand ConnectCommand { get; }
-
-    public ViewModel(ISerial _serial)
+    ~UI()
     {
-        serial = _serial;
-        
-        ConnectCommand = new RelayCommand(param => 
-        {
-            serial.PluginConnect(1);
-        });
+        DebugLogger.Log(3, $"[DEBUG] Disposing IRDetection UI Instance");
     }
 }

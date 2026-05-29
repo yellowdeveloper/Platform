@@ -109,6 +109,8 @@ namespace ObjectDetection
                     }
 
                     receivedBuffer.RemoveRange(0, headerIndex + footerIndex + 8);
+
+                    footerTryCnt = 0;
                 }
                 else
                 {
@@ -132,6 +134,7 @@ namespace ObjectDetection
         public void ParseReceivedData()
         {
             DebugLogger.Log(3, $"[DEBUG] *Function In* ParseReceivedData entered");
+
             List<OpenCvSharp.Rect> receivedRects = new List<OpenCvSharp.Rect>();
             List<int> receivedCls = new List<int>();
             List<int> receivedProbs = new List<int>();
