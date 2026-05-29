@@ -323,19 +323,22 @@
                                 </Grid.ColumnDefinitions>
                                 <commonUtil:RoundButton Grid.Column="0" Margin="5" CornerRadius="5"
                                                         BorderThickness="2" Foreground="#000000"
-                                                        BorderBrush="Black" FontSize="20">
+                                                        BorderBrush="Black" FontSize="20" Command="{Binding MeasureStartCommand}">
                                     <TextBlock Text="Start"
                                                FontFamily="Bahnschrift Condensed"/>
                                 </commonUtil:RoundButton>
                                 <Border Grid.Column="1" BorderThickness="2,0,0,0" BorderBrush="Black"
-                                        Margin="5,2,0,2">
-                                    <Grid>
+                                        Margin="0,2,0,2">
+                                    <Grid Margin="5,0,0,0">
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="*"/>
                                             <RowDefinition Height="*"/>
                                         </Grid.RowDefinitions>
-                                        <TextBlock Grid.Row="0" Text="{Binding topMessageLeft}" FontSize="15" FontFamily="Noto Sans KR Black" VerticalAlignment="Center"/>
-                                        <TextBlock Grid.Row="1" Text="{Binding topMessageRight}" FontSize="15"/>
+                                        <TextBlock Grid.Row="0" Text="{Binding topMessageLeft}" FontSize="15"
+                                                   FontFamily="Noto Sans KR Black" VerticalAlignment="Center"/>
+                                        <TextBlock Grid.Row="1" Text="{Binding topMessageRight}" FontSize="15"
+                                                   FontFamily="Noto Sans KR Black" VerticalAlignment="Center"
+                                                   Foreground="Red"/>
                                     </Grid>
                                 </Border>
                             </Grid>

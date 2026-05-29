@@ -224,6 +224,10 @@ namespace ObjectDetection
             {
                 DebugLogger.Log(1, $"[ERROR] Error While Updating Frame :: {ex}");
             }
+            finally
+            {
+                frame.Dispose();
+            }
         }
 
         public unsafe void UpdateFrame(Mat frame)

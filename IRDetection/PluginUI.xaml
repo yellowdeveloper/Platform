@@ -154,6 +154,11 @@
                                              TextAlignment="Left" Margin="0,0,15,0" FontFamily="Bahnschrift Light"
                                              VerticalAlignment="Top" HorizontalAlignment="Stretch"
                                              BorderBrush="Transparent" BorderThickness="0"/>
+                                    <TextBlock Text="Bias (Temporary)" FontFamily="Bahnschrift" VerticalAlignment="Bottom"/>
+                                    <TextBox Text="{Binding bias, UpdateSourceTrigger=LostFocus, Mode=TwoWay}"
+                                             TextAlignment="Left" Margin="0,0,15,0" FontFamily="Bahnschrift Light"
+                                             VerticalAlignment="Top" HorizontalAlignment="Stretch"
+                                             BorderBrush="Transparent" BorderThickness="0"/>
                                 </UniformGrid>
                             </Grid>
                         </Border>

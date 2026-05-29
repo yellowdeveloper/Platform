@@ -255,7 +255,8 @@ namespace AnemiaPrediction
             {
                 if (Application.Current == null) return;
 
-                Application.Current.Dispatcher.Invoke(new Action(() => {
+                Application.Current.Dispatcher.Invoke(new Action(() =>
+                {
                     OpenCvSharp.Rect roi = new OpenCvSharp.Rect(110, 80, 420, 320);
 
                     if (bitmapShow == null || bitmapShow.PixelWidth != frame.Width || bitmapShow.PixelHeight != frame.Height)
@@ -288,6 +289,10 @@ namespace AnemiaPrediction
             {
                 DebugLogger.Log(1, $"[ERROR] Error While Updating Frame :: {ex}");
             }
+            finally
+            {
+                frame.Dispose();
+            }
         }
 
         public unsafe void UpdateFrame(Mat frame)
@@ -318,7 +323,7 @@ namespace AnemiaPrediction
 
         private async Task ProcessImageAndCallSendFunc()
         {
-            DebugLogger.Log(2, $"[DEBUG] trc:: {tryCount} | status:: {sendStatus}");
+            DebugLogger.Log(2, $"[DEBUG] trc:: {tryCount} | status:: {sendStatus} {isUpdated} {isRefBoxValid}");
             if (sendStatus == ESendStatus.WaitingForResponse && tryCount > 15)
             {
                 DebugLogger.Log(2, $"[WARN] Late Response, re-call Send Function tryCount::{tryCount} | status:: {sendStatus}");

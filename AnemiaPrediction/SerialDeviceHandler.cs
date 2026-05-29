@@ -53,7 +53,7 @@ namespace AnemiaPrediction
         /// <summary>
         /// 데이터 유효성을 확인하기 위함. 
         /// </summary>
-        public int checkValidDataLength = 12;
+        public int checkValidDataLength = 9;
 
         public void SerialConnect(int id)
         {
@@ -101,7 +101,7 @@ namespace AnemiaPrediction
                 {
                     dataLength = footerIndex;
 
-                    if (dataLength >= checkValidDataLength && dataLength % checkValidDataLength == 0)
+                    if (dataLength >= checkValidDataLength && dataLength % checkValidDataLength == 5)
                     {
                         DebugLogger.Log(3, $"[DEBUG] Valid Packet Found, Process to Next Step");
                         validData = receivedBuffer.GetRange(headerIndex + 4, dataLength);
@@ -193,11 +193,11 @@ namespace AnemiaPrediction
                 byte[] rectData = validData.Take(9).ToArray();
                 validData.RemoveRange(0, 9);
 
-                int nailProb = rectData[1];
-                int x = BitConverter.ToInt16(rectData, 2); // lt x
-                int y = BitConverter.ToInt16(rectData, 4); // lt y
-                int w = BitConverter.ToInt16(rectData, 6);
-                int h = BitConverter.ToInt16(rectData, 8);
+                int nailProb = rectData[0];
+                int x = BitConverter.ToInt16(rectData, 1); // lt x
+                int y = BitConverter.ToInt16(rectData, 3); // lt y
+                int w = BitConverter.ToInt16(rectData, 5);
+                int h = BitConverter.ToInt16(rectData, 7);
 
                 DebugLogger.Log(3, $"[DEBUG] Before Process :: x={x}, y={y}, w={w}, h={h}");
 

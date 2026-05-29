@@ -50,6 +50,8 @@ namespace IRDetection
 
         public byte[] lepton_render = new byte[57600];
 
+        // WARN:: Temporary action for lepton sensor. PixelMax will be "MaxTemp - bias"
+        private float _bias;
         private float _pixelMax;
         private float _power;
         private float _ampere;
@@ -74,6 +76,11 @@ namespace IRDetection
         {
             get { return _pixelMax; }
             set { _pixelMax = value; OnPropertyChanged(); }
+        }
+        public float bias
+        {
+            get { return _bias; }
+            set { _bias = value; OnPropertyChanged(); }
         }
         public double fps
         {
@@ -418,7 +425,7 @@ namespace IRDetection
                     }
                 }
             }
-            pixelMax = maxTemp;
+            pixelMax = maxTemp - bias;
         }
 
         private float DecalcTemp(int r, int g, int b)
