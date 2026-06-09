@@ -106,6 +106,11 @@ namespace AnemiaPrediction
                         DebugLogger.Log(3, $"[DEBUG] Valid Packet Found, Process to Next Step");
                         validData = receivedBuffer.GetRange(headerIndex + 4, dataLength);
                     }
+                    else if (dataLength == 10)
+                    {
+                        validData = receivedBuffer.GetRange(headerIndex + 4, dataLength);
+                        if (validData[0] != 0xff) validData.Clear(); 
+                    }
                     else
                     {
                         DebugLogger.Log(2, $"[WARN] Warning!! DataLength Not Valid. Discard this packet.");
@@ -147,7 +152,7 @@ namespace AnemiaPrediction
             float prob = 0.0f;
             byte errorCode = 0;
 
-            if (validData.Count < 12 && validData[0] == 0xFF)
+            if (validData.Count == 10 && validData[0] == 0xFF)
             {
                 errorCode = validData[1];
                 PointsReceived.Invoke(0.0f, 0.0f, 0.0f, errorCode, null);

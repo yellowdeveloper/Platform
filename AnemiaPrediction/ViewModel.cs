@@ -55,7 +55,7 @@ namespace AnemiaPrediction
         private int tryCount = 0;
         public ESendStatus sendStatus = ESendStatus.NotReady;
 
-        private string _topMessageLeft;
+        private string _topMessageLeft = "기기와 연결해 주세요.";
         private string _topMessageRight = "진단 결과가 없습니다.";
 
         public int[] serialDevices
@@ -272,11 +272,13 @@ namespace AnemiaPrediction
                 if (UtilsForMatImage.CheckIfRegionWhite(frame, new OpenCvSharp.Rect(180, 285, 34, 34)))
                 {
                     isRefBoxValid = true;
+                    if (!measureFlag) return;
                     topMessageLeft = "이미지 전송 후 결과를 기다리는 중입니다";
                 }
                 else
                 {
                     isRefBoxValid = false;
+                    if (!measureFlag) return;
                     topMessageLeft = "배경이 흰색이 아니거나, 너무 어둡습니다.";
                     return;
 

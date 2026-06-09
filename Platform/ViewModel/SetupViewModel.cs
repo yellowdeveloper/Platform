@@ -137,7 +137,8 @@ namespace Platform.ViewModel
                 DebugLogger.Log(3, $"[DEBUG] {i}th spi :: {spiDevices[i]}");
                 spiService.Connect(spiDevices[i]);
             }
-            spiStat = spiService.IsSPIDeviceExists(spiDevices[spiIndex]);
+
+            if (spiDevices.Length > 0) spiStat = spiService.IsSPIDeviceExists(spiDevices[spiIndex]);
 
             for (int i = 0; i < size; i++)
             {
