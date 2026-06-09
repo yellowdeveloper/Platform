@@ -22,7 +22,8 @@ namespace Platform.ViewModel
         public SetupViewModel setupViewModel { get; }
         public PluginViewModel pluginViewModel { get; }
 
-        public object _pluginUI;
+        private object _pluginUI;
+        private IUI loadedUI;
         public ObservableCollection<PluginComponent> plugins { get; } = new ObservableCollection<PluginComponent>();
 
         private readonly DispatcherTimer _dateTimer = new DispatcherTimer();
@@ -115,11 +116,28 @@ namespace Platform.ViewModel
         {
             try
             {
+                if (loadedUI != null)
+                {
+                    DebugLogger.Log(3, "[DEBUG] Replacing existing plugin... Disposing old plugin first.");
+
+                    loadedUI.CloseRequested -= OnPluginCloseRequested;
+
+                    if (loadedUI is IDisposable disposableUI)
+                    {
+                        disposableUI.Dispose();
+                    }
+
+                    loadedUI = null;
+                    pluginUI = null;
+                }
+
                 IPlugin nowPlugin;
                 IUI nowUI;
 
                 nowPlugin = pluginService.LoadPlugin(_plugin.pluginIndex);
                 nowUI = nowPlugin.GetUIPlugins(serialService, spiService);
+
+                loadedUI = nowUI;
 
                 pluginUI = nowUI.GetPluginUI();
 
@@ -140,15 +158,16 @@ namespace Platform.ViewModel
             {
                 closedUI.CloseRequested -= OnPluginCloseRequested;
 
-                if (pluginUI is UIElement uiElement)
-                {
-                    pluginUI = null;
-                }
-
                 if (closedUI is IDisposable disposableUI)
                 {
                     disposableUI.Dispose();
                 }
+
+                if (pluginUI is UIElement uiElement)
+                {
+                    pluginUI = null;
+                }
+                loadedUI = null;
 
                 DebugLogger.Log(3, "[DEBUG] Plugin has been closed and removed from UI.");
             }

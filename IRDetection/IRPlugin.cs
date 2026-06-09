@@ -41,13 +41,15 @@ public class IRPlugin : IPlugin
     }
 }
 
-public class UI : IUI
+public class UI : IUI, IDisposable
 {
     private readonly IISerialDeviceHandler serialDeviceHandler;
     private readonly IISPIDeviceHandler spiDeviceHandler;
 
     private readonly Settings settings;
     public event EventHandler CloseRequested;
+
+    private ViewModel viewModel;
 
     public UI(IISerialDeviceHandler _serialDeviceHandler, IISPIDeviceHandler _spiDeviceHandler,  Settings _settings)
     {
@@ -59,17 +61,22 @@ public class UI : IUI
     public object GetPluginUI()
     {
         var view = new PluginUI();
-        var viewModel = new ViewModel(serialDeviceHandler, spiDeviceHandler, settings);
 
+        viewModel = new ViewModel(serialDeviceHandler, spiDeviceHandler, settings);
         view.DataContext = viewModel;
 
         view.CloseRequested += (sender, e) =>
         {
-            viewModel?.Dispose();
             this.CloseRequested?.Invoke(this, EventArgs.Empty);
         };
 
         return view;
+    }
+
+    public void Dispose()
+    {
+        viewModel?.Dispose();
+        DebugLogger.Log(3, $"[DEBUG] Disposing IRDetection UI & ViewModel");
     }
 
     ~UI()

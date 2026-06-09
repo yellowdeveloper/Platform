@@ -167,7 +167,7 @@ namespace AnemiaPrediction
 
         private void CamaraDisconnect()
         {
-            webCamService.Dispose();
+            webCamService?.Dispose();
             webCamService.FrameUpdate -= OnFrameUpdate;
         }
 
@@ -383,6 +383,15 @@ namespace AnemiaPrediction
         {
             serialDeviceHandler.Dispose();
             serialDeviceHandler.PointsReceived -= OnPointsReceived;
+
+            spiDeviceHandler?.SPIDisconnect();
+
+            CamaraDisconnect();
+
+            frameToSend?.Dispose();
+            tmpMat?.Dispose();
+            frameToDraw?.Dispose();
+            convertedMat?.Dispose();
         }
 
         public void GetDeviceNum()

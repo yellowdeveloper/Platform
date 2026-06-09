@@ -39,6 +39,8 @@ public class UI : IUI
     private readonly Settings settings;
     public event EventHandler CloseRequested;
 
+    private ViewModel viewModel;
+
     public UI(IISerialDeviceHandler _serialDeviceHandler, IISPIDeviceHandler _spiDeviceHandler, Settings _settings)
     {
         serialDeviceHandler = _serialDeviceHandler;
@@ -49,13 +51,12 @@ public class UI : IUI
     public object GetPluginUI()
     {
         var view = new PluginUI();
-        var viewModel = new ViewModel(serialDeviceHandler, spiDeviceHandler, settings);
 
+        viewModel = new ViewModel(serialDeviceHandler, spiDeviceHandler, settings);
         view.DataContext = viewModel;
 
         view.CloseRequested += (sender, e) =>
         {
-            viewModel?.Dispose();
             this.CloseRequested?.Invoke(this, EventArgs.Empty);
         };
 

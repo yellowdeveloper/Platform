@@ -468,8 +468,20 @@ namespace IRDetection
 
         public void Dispose()
         {
-            serialDeviceHandler.Dispose();
+            serialDeviceHandler?.Dispose();
             serialDeviceHandler.PointsReceived -= OnPointsReceived;
+
+            spiDeviceHandler?.SPIDisconnect();
+
+            leptonService?.Disconnect();
+            leptonService?.Dispose();
+            leptonService.FrameUpdate -= OnFrameUpdate;
+
+            colorMat?.Dispose();
+            colorMatShow?.Dispose();
+
+            frameToDraw?.Dispose();
+            convertedMat?.Dispose();
         }
 
         public void GetDeviceNum()

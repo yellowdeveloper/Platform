@@ -55,6 +55,7 @@ namespace IRDetection.IRDevices
                 DebugLogger.Log(1, $"[ERROR] LocID {locID}에 해당하는 장치를 찾을 수 없습니다.");
                 return 0;
             }
+            DebugLogger.Log(3, $"[DEBUG] 성공적으로 LocID {locID}에 해당하는 장치에 연결되었습니다.");
 
             ft232h = new Ft232HDevice(targetDevice);
 
@@ -111,7 +112,7 @@ namespace IRDetection.IRDevices
                 if ((lepton_packet[0] & 0x0F) == 0x0F)
                 {
                     discardCount++;
-                    if (discardCount > 300)
+                    if (discardCount > 4000)
                     {
                         DebugLogger.Log(3, $"[DEBUG] Reset Camera...");
                         Disconnect();

@@ -84,7 +84,9 @@
                                           CornerRadius="5" Style="{StaticResource DefaultButton}"
                                           BorderBrush="Black" BorderThickness="1"
                                           Command="{Binding SPIConnectionButtonCommand}">
-                            <TextBlock Text="Connect" TextAlignment="Center" Margin="2.5" FontWeight="DemiBold"/>
+                            <TextBlock TextAlignment="Center" Margin="2.5" FontWeight="DemiBold"
+                                       Style="{StaticResource ConnectionButtonTextBlock}"
+                                       util:StateChangeStyle.IsActive="{Binding spiStat}"/>
                         </commonUtil:RoundButton>
 
                         <TextBlock Grid.Row="1" Grid.Column="0" Text="NO.1" Margin="20,0,0,0" FontSize="12" FontWeight="Normal"
@@ -95,7 +97,9 @@
                                        VerticalAlignment="Center" HorizontalAlignment="Center"/>
                         </Border>
                         <TextBlock Grid.Row="1" Grid.Column="2" Text="●"
-                                   VerticalAlignment="Center" HorizontalAlignment="Left" Foreground="Red"/>
+                                   VerticalAlignment="Center" HorizontalAlignment="Left"
+                                   Style="{StaticResource ConnectionStateIndication}"
+                                   util:StateChangeStyle.IsActive="{Binding spiStat}"/>
                         <TextBlock Grid.Row="1" Grid.Column="2" Text="○" Foreground="DimGray" Opacity="0.4"
                                    VerticalAlignment="Center" HorizontalAlignment="Left"/>
                     </Grid>
@@ -142,7 +146,9 @@
                                           CornerRadius="5" Style="{StaticResource DefaultButton}"
                                           BorderBrush="Black" BorderThickness="1"
                                           Command="{Binding SerialConnectionButtonCommand}">
-                            <TextBlock TextAlignment="Center" Margin="2.5" FontWeight="DemiBold" Style="{StaticResource ConnectionButtonTextBlock}"/>
+                            <TextBlock TextAlignment="Center" Margin="2.5" FontWeight="DemiBold"
+                                       Style="{StaticResource ConnectionButtonTextBlock}"
+                                       util:StateChangeStyle.IsActive="{Binding serialStat}"/>
                         </commonUtil:RoundButton>
 
                         <TextBlock Grid.Row="1" Grid.Column="0" Text="{Binding serialIndex, StringFormat='NO.{0}'}" Margin="20,0,0,0" FontSize="12"
@@ -154,7 +160,7 @@
                             <TextBlock Text="{Binding serialConfig.comPort}" Foreground="DarkGray"
                                        VerticalAlignment="Center" HorizontalAlignment="Center"/>
                         </Border>
-                        <TextBlock Grid.Row="1" Grid.Column="2" Text="●"
+                        <TextBlock Grid.Row="1" Grid.Column="2" Text="●" util:StateChangeStyle.IsActive="{Binding serialStat}"
                                    VerticalAlignment="Center" HorizontalAlignment="Left" Style="{StaticResource ConnectionStateIndication}"/>
                         <TextBlock Grid.Row="1" Grid.Column="2" Text="○" Foreground="DimGray" Opacity="0.4"
                                    VerticalAlignment="Center" HorizontalAlignment="Left"/>

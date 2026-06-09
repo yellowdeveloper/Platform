@@ -331,6 +331,15 @@ namespace ObjectDetection
         {
             serialDeviceHandler.Dispose();
             serialDeviceHandler.PointsReceived -= OnPointsReceived;
+
+            spiDeviceHandler?.SPIDisconnect();
+
+            CamaraDisconnect();
+
+            frameToSend?.Dispose();
+            tmpMat?.Dispose();
+            frameToDraw?.Dispose();
+            convertedMat?.Dispose();
         }
 
         public void GetDeviceNum()

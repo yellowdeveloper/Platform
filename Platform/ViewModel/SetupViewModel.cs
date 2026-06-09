@@ -1,4 +1,5 @@
-﻿using OpenCvSharp;
+﻿using Iot.Device.FtCommon;
+using OpenCvSharp;
 using Platform.Model;
 using Platform.Services;
 using Platform.Utils;
@@ -89,10 +90,10 @@ namespace Platform.ViewModel
             serialService = _serialService;
             spiService = _spiService;
 
-            Init();
+            Init(true);
 
             SerialConnectionButtonCommand = new RelayCommand(param => {
-                
+
                 if (!serialStat)
                     serialStat = serialService.Connect(serialIndex, serialConfigs[serialIndex]);
                 else
@@ -103,6 +104,7 @@ namespace Platform.ViewModel
             });
 
             SPIConnectionButtonCommand = new RelayCommand(param => {
+                if (spiDevices[spiIndex] == null) return;
 
                 if (!spiStat)
                     spiStat = spiService.Connect(spiDevices[spiIndex]);
@@ -116,7 +118,7 @@ namespace Platform.ViewModel
 
         // Get Available Serial Ports and Set to List
         // Called when SetupWindow Pop-Up
-        public void Init()
+        public void Init(bool startInit = false)
         {
             // Clear serial config list
             serialConfigs.Clear();
@@ -125,14 +127,23 @@ namespace Platform.ViewModel
             // Clear spi device index list
             spiDevices = communicationFacade.InitializeSPIDevices();
 
-            // Codes For Debug :: You can comment out 3 lines after this comment
             int size = serialConfigs.Count();
             DebugLogger.Log(3, $"[DEBUG] Num of ports :: {size}");
-            for (int i = 0; i < size; i++) DebugLogger.Log(3, $"[DEBUG] {i}th serial :: {serialConfigs[i].comPort}");
+
+            if (startInit == false) return;
+
+            for (int i = 0; i < size; i++)
+            {
+                DebugLogger.Log(3, $"[DEBUG] {i}th serial :: {serialConfigs[i].comPort}");
+                serialService.Connect(i, serialConfigs[i]);
+            }
+            serialStat = serialService.isSerialDeviceExists(serialIndex);
         }
 
         public void IncreaseSerialIndex()
         {
+            if (serialConfigs.Count <= 0) return;
+
             if (serialIndex < serialConfigs.Count - 1) ++serialIndex;
             else serialIndex = 0;
 
@@ -144,6 +155,8 @@ namespace Platform.ViewModel
 
         public void DecreaseSerialIndex()
         {
+            if (serialConfigs.Count <= 0) return;
+
             if (serialIndex > 0) serialIndex--;
             else serialIndex = serialConfigs.Count - 1;
 
@@ -155,6 +168,8 @@ namespace Platform.ViewModel
 
         public void IncreaseSPIIndex()
         {
+            if (spiDevices.Length <= 0) return;
+
             if (spiIndex < spiDevices.Length - 1) ++spiIndex;
             else spiIndex = 0;
 
@@ -166,6 +181,8 @@ namespace Platform.ViewModel
 
         public void DecreaseSPIIndex()
         {
+            if (spiDevices.Length <= 0) return;
+
             if (spiIndex > 0) spiIndex--;
             else spiIndex = spiDevices.Length - 1;
 

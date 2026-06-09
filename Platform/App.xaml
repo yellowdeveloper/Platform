@@ -84,13 +84,13 @@
         <Style x:Key="ConnectionStateIndication" TargetType="TextBlock">
             <Setter Property="Foreground" Value="Red"/>
             <Style.Triggers>
-                <DataTrigger Binding="{Binding serialStat}" Value="true">
+                <Trigger Property="util:StateChangeStyle.IsActive" Value="true">
                     <Setter Property="Foreground" Value="#FF00FF00"/>
-                </DataTrigger>
+                </Trigger>
 
-                <DataTrigger Binding="{Binding serialStat}" Value="false">
+                <Trigger Property="util:StateChangeStyle.IsActive" Value="false">
                     <Setter Property="Foreground" Value="Red"/>
-                </DataTrigger>
+                </Trigger>
             </Style.Triggers>
         </Style>
 
@@ -98,13 +98,13 @@
         <Style x:Key="ConnectionButtonTextBlock" TargetType="TextBlock">
             <Setter Property="Text" Value="Connect"/>
             <Style.Triggers>
-                <DataTrigger Binding="{Binding serialStat}" Value="true">
+                <Trigger Property="util:StateChangeStyle.IsActive" Value="true">
                     <Setter Property="Text" Value="Disconnect"/>
-                </DataTrigger>
+                </Trigger>
 
-                <DataTrigger Binding="{Binding serialStat}" Value="false">
+                <Trigger Property="util:StateChangeStyle.IsActive" Value="false">
                     <Setter Property="Text" Value="Connect"/>
-                </DataTrigger>
+                </Trigger>
             </Style.Triggers>
         </Style>
         <!-- Static Style Resources End -->

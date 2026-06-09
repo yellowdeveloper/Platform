@@ -51,7 +51,7 @@ namespace Platform.Services
 
             if (devCount == 0)
             {
-                DebugLogger.Log(2, $"[WARN] Device doesn't exists.");
+                DebugLogger.Log(2, $"[WARN] SPI Device doesn't exists.");
                 return null;
             }
 
