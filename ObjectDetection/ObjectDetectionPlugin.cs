@@ -63,6 +63,12 @@ public class UI : IUI, IDisposable
         return view;
     }
 
+    public void Dispose()
+    {
+        viewModel?.Dispose();
+        DebugLogger.Log(3, $"[DEBUG] Disposing IRDetection UI & ViewModel");
+    }
+
     ~UI()
     {
         DebugLogger.Log(3, $"[DEBUG] Disposing ObjectDetection UI Instance");
