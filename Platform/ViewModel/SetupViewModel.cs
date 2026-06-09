@@ -132,6 +132,13 @@ namespace Platform.ViewModel
 
             if (startInit == false) return;
 
+            for (int i = 0; i < spiDevices.Length; i++)
+            {
+                DebugLogger.Log(3, $"[DEBUG] {i}th spi :: {spiDevices[i]}");
+                spiService.Connect(spiDevices[i]);
+            }
+            spiStat = spiService.IsSPIDeviceExists(spiDevices[spiIndex]);
+
             for (int i = 0; i < size; i++)
             {
                 DebugLogger.Log(3, $"[DEBUG] {i}th serial :: {serialConfigs[i].comPort}");
