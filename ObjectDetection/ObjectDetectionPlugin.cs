@@ -31,7 +31,7 @@ public class ObjectDetection : IPlugin
     }
 }
 
-public class UI : IUI
+public class UI : IUI, IDisposable
 {
     private readonly IISerialDeviceHandler serialDeviceHandler;
     private readonly IISPIDeviceHandler spiDeviceHandler;
